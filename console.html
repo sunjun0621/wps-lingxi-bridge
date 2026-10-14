@@ -30,7 +30,22 @@ header{display:flex;justify-content:space-between;gap:12px;align-items:center}h2
 button{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:8px 11px;cursor:pointer;white-space:nowrap;transition:background .15s}
 button:hover:not(:disabled){background:var(--green-bg)}button:disabled{opacity:.48;cursor:default}
 .primary{background:var(--green);color:white;border-color:var(--green)}.primary:hover:not(:disabled){background:#1b594a}
-.service-status{padding:10px 13px;border-radius:8px;background:var(--green-bg);display:flex;align-items:center;gap:9px;min-height:38px;font-size:12.5px}
+.service-status{padding:10px 13px;border-radius:8px;background:var(--green-bg);display:flex;align-items:center;gap:9px;min-height:38px;font-size:12.5px;flex-wrap:wrap}
+.lingxi-state{font-size:11px;padding:2px 8px;border-radius:6px;background:var(--bg);color:var(--muted)}
+.lingxi-state.dead{color:#fff;background:var(--red)}
+.lingxi-state.running{color:var(--green)}
+#activityBox{background:var(--row);border-radius:9px;padding:11px 13px;display:flex;flex-direction:column;gap:6px;flex-shrink:0;max-height:170px;overflow:auto}
+#activityBox h3{margin:0;font-size:12.5px;display:flex;justify-content:space-between;align-items:center}
+#activityBox h3 .openlogs{font:inherit;font-size:11.5px;padding:3px 9px}
+.act-row{display:flex;gap:9px;align-items:center;font-size:12px;color:var(--text);font-variant-numeric:tabular-nums}
+.act-row .m{font-weight:550;min-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.act-row .st{font-size:11px;padding:2px 7px;border-radius:5px;background:var(--bg);color:var(--muted);white-space:nowrap}
+.act-row .st.upstream{color:var(--orange);background:rgba(188,117,44,.12)}
+.act-row .st.content{color:var(--green)}
+.act-row .st.failed{color:#fff;background:var(--red)}
+.act-row .st.done{color:var(--green);background:var(--green-bg)}
+.act-row .t{color:var(--muted);font-size:11px;margin-left:auto;white-space:nowrap}
+.act-empty{font-size:12px;color:var(--muted)}
 .toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.metrics{display:flex;gap:26px}.metrics div{display:flex;flex-direction:column;gap:3px}
 .metrics b{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}.metrics span{font-size:11px;color:var(--muted)}
 .tool-actions{display:flex;align-items:center;gap:9px}
@@ -85,7 +100,17 @@ footer{font-size:11px;color:var(--muted);line-height:1.6;flex-shrink:0}
 <main>
   <header><div><h2>灵犀订阅模型</h2><p class="subtitle">勾选模型并选择思维等级；可一键测试后导入 WorkBuddy。</p></div>
   <div class="actions"><button id="findcfg">读取 WorkBuddy 配置</button></div></header>
-  <div class="service-status"><span id="service-dot" class="dot off"></span><span id="service-text">正在检测服务…</span></div>
+  <div class="service-status"><span id="service-dot" class="dot off"></span><span id="service-text">正在检测服务…</span>
+    <span class="lingxi-state" id="lingxi-state" hidden></span>
+    <span class="lingxi-state" id="meta-info" hidden></span></div>
+  <div id="activityBox" hidden>
+    <h3><span id="actTitle">活动</span>
+      <span style="display:flex;gap:6px">
+        <button class="openlogs" id="actToggle" title="切换 实时/历史（历史来自 reqlog.jsonl，跨重启保留）">历史</button>
+        <button class="openlogs" id="openLogs">打开日志目录</button>
+      </span></h3>
+    <div id="actList"><div class="act-empty">暂无请求记录。从 WorkBuddy 发起对话后，这里会实时显示进行中与最近 20 条请求。</div></div>
+  </div>
   <section class="toolbar">
     <div class="metrics"><div><b id="discovered">0</b><span>已发现</span></div><div><b id="selected">0</b><span>已勾选</span></div><div><b id="imported">0</b><span>已导入</span></div></div>
     <div class="tool-actions">
@@ -98,6 +123,7 @@ footer{font-size:11px;color:var(--muted);line-height:1.6;flex-shrink:0}
       <button id="testAll">一键测试已勾选</button>
       <label class="switch"><input id="force" type="checkbox" style="accent-color:var(--green)">强制覆盖同名</label>
       <button id="import" class="primary">导入 WorkBuddy</button>
+      <button id="importZcode" title="把勾选模型写入 ZCode 自定义供应商（~/.zcode/v2/provider_config.json），需重启 ZCode 生效">导入 ZCode</button>
     </div>
   </section>
   <div id="feedback" hidden></div>
@@ -207,6 +233,13 @@ $("qrRefresh").onclick=startQr;
 
 /* ---------- 一键测试 ---------- */
 let testPollTimer=null;
+function probeTitle(it){   // 探测指标悬停详情：首字/字数/速率
+  const bits=[];
+  if(it.ttfb!=null) bits.push("首字 "+it.ttfb+"s");
+  if(it.chars) bits.push("输出 "+it.chars+" 字");
+  if(it.rate!=null) bits.push("约 "+it.rate+" 字/秒");
+  return bits.join(" · ");
+}
 $("testAll").onclick=async()=>{
   const keys=selectedKeys();
   if(!keys.length) return feedback("请先勾选模型",true);
@@ -214,7 +247,7 @@ $("testAll").onclick=async()=>{
   try{
     await api("/admin/test-all",{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({models:keys,effort:$("testEffort").value,effort_map})});
-    keys.forEach(k=>{ const b=$("b-"+k); b.className="badge"; b.textContent="排队中"; $("t-"+k).textContent=""; });
+    keys.forEach(k=>{ const b=$("b-"+k); b.className="badge"; b.textContent="排队中"; $("t-"+k).textContent=""; $("t-"+k).title=""; });
     feedback("开始测试 "+keys.length+" 个模型…");
     if(testPollTimer) clearInterval(testPollTimer);
     testPollTimer=setInterval(pollTestProgress,1200); pollTestProgress();
@@ -226,26 +259,94 @@ async function pollTestProgress(){
     d.done.forEach(it=>{
       const b=$("b-"+it.model), tm=$("t-"+it.model);
       tm.textContent=it.elapsed+"s";
-      if(it.ok){ b.className="badge ok"; b.textContent="可用"; }
-      else { b.className="badge bad"; b.textContent="失败"; b.title=it.error; }
+      if(it.ok){
+        b.className="badge ok"; b.textContent="可用";
+        tm.textContent=it.elapsed+"s"+(it.chars?(" · "+it.chars+"字"):"");
+        tm.title=probeTitle(it); b.title=probeTitle(it);
+      }
+      else { b.className="badge bad"; b.textContent="失败"; b.title=(it.hint?it.hint+"\n":"")+(it.error||""); }
     });
     if(!d.running){
       clearInterval(testPollTimer);
       const ok=d.done.filter(x=>x.ok).length;
-      feedback(`测试完成：${ok}/${d.total} 可用`, ok<d.total);
+      feedback(`测试完成：${ok}/${d.total} 可用（结果已保存，刷新页面不丢失）`, ok<d.total);
     }
   }catch(e){ clearInterval(testPollTimer); feedback(e.message,true); }
 }
 
 /* ---------- WorkBuddy ---------- */
+const LINGXI_LABEL = {idle:"灵犀：待启动", running:"灵犀：已连接", dead:"灵犀：已断开（自动恢复中）"};
+function applyBadges(results){
+  if(!results) return;
+  Object.entries(results).forEach(([k,r])=>{
+    const b=$("b-"+k), tm=$("t-"+k);
+    if(!b) return;
+    if(r.ok){
+      b.className="badge ok"; b.textContent="可用";
+      if(tm){
+        tm.textContent=r.elapsed+"s"+(r.chars?(" · "+r.chars+"字"):"");
+        tm.title=probeTitle(r); b.title=probeTitle(r);
+      }
+    }
+    else { b.className="badge bad"; b.textContent="失败"; b.title=(r.hint||"")+(r.error||""); }
+  });
+}
 async function refreshStatus(){
   try{
     const s=await api("/admin/status");
     $("service-dot").className="dot"; $("service-text").textContent="服务运行中 · "+s.service;
+    const ls=$("lingxi-state"); ls.hidden=false; ls.textContent=LINGXI_LABEL[s.lingxi?.state]||s.lingxi?.state||"";
+    ls.className="lingxi-state "+(s.lingxi?.state==="dead"?"dead":s.lingxi?.state==="running"?"running":"");
+    const mi=$("meta-info"); mi.hidden=false;
+    mi.textContent=`${s.host}:${s.port} · 令牌 ${s.token_mask} · 超时 ${s.timeout}s · 已运行 ${s.uptime}`;
+    mi.title=s.gateway_config
+      ? `配置文件：${s.gateway_config.path}${s.gateway_config.exists?"（生效）":"（未创建，用默认值）"}`
+      : "";
     $("sync").textContent="配置路径："+s.config.path+(s.config.exists?"（已存在）":"（将在导入时创建）");
     $("imported").textContent=s.config.imported.length;
   }catch(e){ $("service-dot").className="dot off"; $("service-text").textContent="服务异常："+e.message; }
 }
+/* ---------- 活动面板（实时 2s 轮询 / 历史来自 reqlog.jsonl） ---------- */
+let actMode="live";   // live=内存活动, history=reqlog 持久记录
+function actRow(it){
+  const live=!it.ts;   // 实时记录无 ts,历史记录(要求log)有 ts
+  const ttfb=live?it.first_byte:it.ttfb;
+  const stage=it.stage||"";
+  const label=live?(it.stage_label||stage)
+    :(stage==="done"?"完成":stage==="failed"?"失败":stage);
+  const dur=it.elapsed!=null?Number(it.elapsed).toFixed(1)+"s"
+    :(ttfb!=null?`首字 ${ttfb}s`:Math.round(Date.now()/1000-it.start)+"s…");
+  const chars=(it.chars||0)?` · ${it.chars}字`:"";
+  const err=it.error?` title="${String(it.error).replace(/"/g,"&quot;")}"`:"";
+  const ts=it.ts?`<span class="t" style="min-width:118px">${String(it.ts).slice(5)}</span>`:"";
+  return `<div class="act-row"${err}>${ts}<span class="m">${it.model}</span>`
+    +`<span class="st ${stage}">${label}</span>`
+    +`<span class="t">${(ttfb!=null&&it.elapsed!=null)?`首字 ${ttfb}s · `:""}${dur}${chars}</span></div>`;
+}
+function renderActivity(d){
+  const box=$("activityBox"), list=$("actList");
+  box.hidden=false;
+  $("actTitle").textContent=actMode==="live"
+    ?(d.active?`活动（进行中 ${d.active}）`:"活动") : "活动 · 历史";
+  if(!d.recent.length){ list.innerHTML='<div class="act-empty">暂无请求记录。从 WorkBuddy 发起对话后，这里会实时显示进行中与最近 20 条请求。</div>'; return; }
+  list.innerHTML=d.recent.map(actRow).join("");
+}
+let actTimer=null;
+async function pollActivity(){
+  try{
+    if(actMode==="live"){ renderActivity(await api("/admin/activity")); }
+    else{
+      const h=await api("/admin/reqlog?limit=50");
+      renderActivity({active:0, recent:h.entries||[]});
+    }
+  }catch(e){ /* 服务异常时状态行已提示 */ }
+}
+$("actToggle").onclick=()=>{
+  actMode=actMode==="live"?"history":"live";
+  $("actToggle").textContent=actMode==="live"?"历史":"实时";
+  pollActivity();
+};
+$("openLogs").onclick=async()=>{ try{ await api("/admin/open-logs",{method:"POST"}); }catch(e){ feedback(e.message,true); } };
 $("findcfg").onclick=async()=>{ try{ await api("/admin/find-config",{method:"POST"}); feedback("已读取配置"); refreshStatus(); }catch(e){ feedback(e.message,true);} };
 $("import").onclick=async()=>{
   const sel=selectedKeys(); if(!sel.length) return feedback("请至少勾选一个模型",true);
@@ -253,6 +354,16 @@ $("import").onclick=async()=>{
   try{ const r=await api("/admin/import",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({selected:sel,force:$("force").checked})});
     feedback(`已导入 ${r.count} 个模型到 ${r.path}`+(r.backup?"（已备份）":"")); refreshStatus();
   }catch(e){ feedback(e.message,true);} $("import").disabled=false;
+};
+$("importZcode").onclick=async()=>{
+  const sel=selectedKeys(); if(!sel.length) return feedback("请至少勾选一个模型",true);
+  $("importZcode").disabled=true;
+  try{
+    const st=await api("/admin/zcode-status");
+    if(st.zcode_running && !confirm("检测到 ZCode 正在运行：写入后它的下一次保存可能覆盖本条目。\n建议完全退出 ZCode 再导入。仍要继续吗？")) { $("importZcode").disabled=false; return; }
+    const r=await api("/admin/import-zcode",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({selected:sel})});
+    feedback(r.hint+(r.backup?"（原配置已备份）":"（无改动）"));
+  }catch(e){ feedback(e.message,true); } $("importZcode").disabled=false;
 };
 
 /* ---------- 单个对话 ---------- */
@@ -272,7 +383,10 @@ $("testModel").onchange=()=>{ /* 切换时同步等级可选项，简化处理 *
 
 (async()=>{
   try{
-    await loadModels(); await Promise.all([refreshStatus(),refreshAccount()]);
+    await loadModels();
+    try{ applyBadges((await api("/admin/results")).results); }catch(e){}   // 恢复历史测试徽标
+    await Promise.all([refreshStatus(),refreshAccount()]);
+    pollActivity(); actTimer=setInterval(pollActivity,2000);
   }catch(e){ $("service-text").textContent=e.message; }
 })();
 setInterval(refreshStatus,20000);

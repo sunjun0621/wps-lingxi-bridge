@@ -158,9 +158,12 @@ class LingxiAppServer:
         return self.request("run/start", p)
 
     def run_stream(self, session_id, agent_input, model_key,
-                   on_text=None, on_reasoning=None, timeout=180, effort=None):
+                   on_text=None, on_reasoning=None, timeout=180, effort=None,
+                   cancel_event=None):
         """发起一次 run 并收集流式输出。model_key 为灵犀模型 key 字符串。
         effort 为思维等级 low/high/max（仅该模型支持时有效）。
+        cancel_event 为中止信号（如客户端断开）：置位后 0.5s 内中止等待，
+        由上层复位连接以真正终止上游 run。
         返回 {text, reasoning, events}。"""
         if effort:
             agent_input = dict(agent_input)
@@ -174,6 +177,8 @@ class LingxiAppServer:
             # 等待 run 结束：轮询感知进程死亡（不干等满超时），并保持总超时语义
             deadline = time.time() + timeout
             while not collector.done.wait(timeout=0.5):
+                if cancel_event is not None and cancel_event.is_set():
+                    raise AppServerError("客户端已断开，中止等待上游结束", transient=True)
                 if not self.is_alive():
                     raise AppServerError("app-server 进程已退出（连接中断）", transient=True)
                 if time.time() >= deadline:
