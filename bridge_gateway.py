@@ -1060,6 +1060,28 @@ def warn_leftover_lingxi():
         pass
 
 
+def startup_login_check():
+    """启动后后台预检登录态：有效则报账号，失效则直接指引去控制台扫码（无需客户端）。"""
+    try:
+        sid = load_sid()
+        if not sid:
+            print("[登录] 未找到 wps_sid：请打开控制台点「扫码登录 / 切换账号」扫码，无需安装任何客户端。")
+            return
+        acct = None
+        try:
+            acct = qr_login.check_session(sid)
+        except Exception:
+            pass
+        if acct:
+            who = acct.get("nickname") or acct.get("user_id") or "已登录"
+            print(f"[登录] wps_sid 有效（{who}），账号正常。")
+        else:
+            print("[登录] wps_sid 已失效或校验失败：请打开控制台点「扫码登录 / 切换账号」重新扫码；")
+            print("       扫码后自动换新 sid 并重连，无需重启本程序，也不需安装灵犀客户端。")
+    except Exception:
+        pass
+
+
 if __name__ == "__main__":
     import uvicorn
     cfg_bits = [
@@ -1087,4 +1109,5 @@ if __name__ == "__main__":
     reqlog_cleanup()   # 按保留天数清理历史请求记录（超期才删）
     print(f"灵犀 Bridge 启动: http://127.0.0.1:{PORT}  token={TOKEN}")
     print(f"日志文件: {LOG_FILE}" + ("" if LOG_ENABLED else "（log_enabled=false，已关闭落盘）"))
+    threading.Thread(target=startup_login_check, daemon=True).start()   # 登录预检（不阻塞启动）
     uvicorn.run(app, host=HOST, port=PORT, log_level="info")

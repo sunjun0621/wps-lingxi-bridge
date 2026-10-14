@@ -53,21 +53,30 @@ WPS 云端模型（DeepSeek / Qwen / GLM / Kimi / MiMo / MiniMax / 豆包）
 
 ### 0. 准备
 
-- Windows；已安装并登录 **WPS 灵犀**桌面版
-- Python 3.11+：`pip install -r requirements.txt`
-- **自备运行件**（本仓库不含 WPS 官方文件）：把本机 WPS 灵犀安装目录中的 `app-server/`
-  复制到项目根目录，需包含 `app-server/service/lingxi.exe` 与 `lingxi-native-host.exe`
+- Windows；Python 3.11+：`pip install -r requirements.txt`
+- **运行件**（本仓库不含 WPS 官方文件）：项目根目录需有 `appserver/app-server/`，
+  含 `service/lingxi.exe` 与 `lingxi-native-host.exe`。
+  获取方式二选一：
+  1. 从 WPS 灵犀桌面的安装目录复制 `resources/app-server/`（或其中的
+     `app-server-windows-amd64.zip` 解压）到项目根目录；
+  2. 沿用他人已备好的 `appserver/` 目录拷贝（自用范围内）。
+- **无需安装或运行 WPS 灵犀桌面客户端**：桥驱动的是项目内自带的
+  `lingxi.exe` 拷贝，与客户端安装目录、客户端数据目录均无依赖（已实测）；
+  登录、掉线恢复全部走控制台扫码（纯网页接口）。
 
 ### 1. 启动
 
 双击 `启动灵犀Bridge.bat`（等价 `python bridge_gateway.py`）。
 约 4 秒后浏览器自动打开控制台：`http://127.0.0.1:8799/?token=lingxi-bridge`。
+启动后约 2 秒内，窗口会打印登录态预检结果（有效 / 失效及扫码指引）。
 
 ### 2. 登录
 
 控制台左侧点「扫码登录 / 切换账号」，用 **WPS 手机 APP** 扫码 →
-自动换取新的 `wps_sid` 并重连，无需重启。
-（亦可用 `08_cookies.py` 从本机灵犀数据解密提取，或临时 `set LINGXI_SID=…`）
+自动换取新的 `wps_sid` 并重连，无需重启、无需任何客户端。
+登录失效时控制台会自动展开二维码并提示；扫码即恢复。
+（亦可用 `08_cookies.py` 从灵犀客户端本地数据解密提取——需客户端在；
+或临时 `set LINGXI_SID=…`）
 
 ### 3. 接入客户端
 

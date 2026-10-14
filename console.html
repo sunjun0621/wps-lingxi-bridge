@@ -181,6 +181,7 @@ function effortOf(k){ const s=document.querySelector(`.segbtn[data-k="${k}"].on`
 function recount(){ $("selected").textContent=selectedKeys().length; }
 
 /* ---------- 账号 / 扫码 ---------- */
+let qrAutoShown=false;   // 登录失效时自动展开扫码框（每页只自动展开一次，成功后复位）
 async function refreshAccount(){
   try{
     const d=await api("/admin/account");
@@ -191,17 +192,22 @@ async function refreshAccount(){
       $("acct-dot").className="dot"; $("acctState").textContent="已登录"+(a.is_plus?"（会员）":"");
       $("av").innerHTML=""; const im=document.createElement("img"); im.className="avatar"; im.src=a.avatar; im.referrerPolicy="no-referrer";
       if(a.avatar){ $("av").appendChild(im); } else { $("av").textContent=(a.nickname||"灵").slice(0,1); }
+      qrAutoShown=false;
     }else{
       $("acctName").textContent="未登录"; $("acctUid").textContent="请扫码登录";
       $("acct-dot").className="dot off"; $("acctState").textContent="登录态失效";
       $("av").textContent="?";
+      if(!qrAutoShown){   // 失效即自动展开二维码：用 WPS 手机 APP 扫一下即可，无需任何客户端
+        qrAutoShown=true; startQr();
+        feedback("登录已失效，已自动展开二维码：用 WPS 手机 APP 扫码即可恢复",true);
+      }
     }
   }catch(e){ $("acctState").textContent="检测失败："+e.message; }
 }
-let qrPhase="scan", qrAlive=false;
+let qrPhase="scan", qrAlive=false, qrStartedAt=0;
 function setQrStatus(t,cls){ const e=$("qrStatus"); e.textContent=t; e.className="qr-status "+(cls||"wait"); }
 async function startQr(){
-  $("qrBox").hidden=false; qrAlive=true; setQrStatus("正在获取二维码…","wait");
+  $("qrBox").hidden=false; qrAlive=true; qrStartedAt=Date.now(); setQrStatus("正在获取二维码…","wait");
   try{
     const d=await api("/admin/qr/start",{method:"POST"});
     $("qrImg").src=d.qr_url; qrPhase="scan";
@@ -214,13 +220,18 @@ async function pollQr(){
   try{
     const o=await api("/admin/qr/poll?phase="+qrPhase);
     if(!qrAlive) return;
-    if(o.state==="pending"){ pollQr(); }
+    if(o.state==="pending"){
+      if(qrPhase==="scan" && Date.now()-qrStartedAt>140000){
+        setQrStatus("二维码可能已过期：若手机扫不到，请点「刷新二维码」","err");
+      }
+      pollQr();
+    }
     else if(o.state==="scan"){
       setQrStatus("已扫码"+(o.nickname?("（"+o.nickname+"）"):"")+"，请在手机上确认","");
       qrPhase="confirm"; pollQr();
     }
     else if(o.state==="logined"){
-      setQrStatus("登录成功，正在切换…",""); qrAlive=false;
+      setQrStatus("登录成功，正在切换…",""); qrAlive=false; qrAutoShown=false;
       await refreshAccount(); feedback("账号已切换并重新连接");
       setTimeout(()=>{ $("qrBox").hidden=true; },1500);
     }
@@ -377,7 +388,15 @@ $("runTest").onclick=async()=>{
     const o=await r.json(); if(!r.ok) throw new Error(o.detail);
     $("testResult").textContent=o.choices[0].message.content;
     const b=$("b-"+model); b.className="badge ok"; b.textContent="可用";
-  }catch(e){ $("testResult").textContent="错误："+e.message; const b=$("b-"+model); b.className="badge bad"; b.textContent="失败"; }
+  }catch(e){
+    $("testResult").textContent="错误："+e.message;
+    const b=$("b-"+model); b.className="badge bad"; b.textContent="失败";
+    // 鉴权类错误：自动展开二维码，点一下扫码即可恢复（无需客户端）
+    if(/登录|扫码|sid|失效/i.test(e.message) && (qrAlive===false || qrBox.hidden)){
+      $("qrBox").hidden=false; startQr();
+      feedback("登录已失效，已为你打开扫码框：用 WPS 手机 APP 扫码即恢复",true);
+    }
+  }
 };
 $("testModel").onchange=()=>{ /* 切换时同步等级可选项，简化处理 */ };
 

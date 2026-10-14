@@ -1,11 +1,20 @@
 # -*- coding: utf-8 -*-
 # 解密灵犀 lingxi.wps.cn 分区 Cookies，提取 wps_sid 等登录态（结果敏感，勿外传）
-import os, json, base64, sqlite3, shutil
+# 注意：本脚本依赖「WPS 灵犀桌面客户端」的本地数据目录；客户端已卸载时请改用
+#       控制台扫码登录（http://127.0.0.1:8799/ → 扫码登录 / 切换账号），无需任何客户端。
+import os, sys, json, base64, sqlite3, shutil
 import win32crypt
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 UD = r"C:\Users\Administrator\AppData\Roaming\WPS 灵犀"
+
+if not os.path.isdir(UD):
+    print("[提示] 未找到灵犀客户端数据目录：", UD)
+    print("       客户端可能已卸载/未安装——这是正常的：本桥运行不依赖客户端。")
+    print("       刷新登录请改用控制台扫码（无需任何客户端）：")
+    print("         http://127.0.0.1:8799/  → 「扫码登录 / 切换账号」→ WPS 手机 APP 扫码")
+    sys.exit(0)
 
 ls = json.load(open(os.path.join(UD, "Local State"), encoding="utf-8"))
 raw = base64.b64decode(ls["os_crypt"]["encrypted_key"])
