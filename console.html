@@ -65,10 +65,6 @@ button:hover:not(:disabled){background:var(--green-bg)}button:disabled{opacity:.
 .badge{font-size:11px;white-space:nowrap;padding:4px 8px;border-radius:6px;background:var(--green-bg);color:var(--green)}
 .badge.ok{background:var(--green);color:#fff}.badge.bad{color:#fff;background:var(--red)}.badge.time{background:transparent;color:var(--muted);padding:4px 0}
 #feedback{font-size:12.5px;background:var(--green-bg);color:var(--green);padding:10px 13px;border-radius:8px}#feedback.error{color:var(--orange);background:#fbefdf}
-#testbox{padding:11px 13px;background:var(--row);border-radius:9px;display:flex;flex-direction:column;gap:8px;flex-shrink:0}
-.testrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}#testModel,#singleEffort{font:inherit;padding:7px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--text);font-size:12.5px}
-#testPrompt{flex:1;min-width:160px;font:inherit;padding:8px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--text)}
-#testResult{max-height:96px;overflow:auto;font-size:12px;line-height:1.7;white-space:pre-wrap;user-select:text}
 footer{font-size:11px;color:var(--muted);line-height:1.6;flex-shrink:0}
 [hidden]{display:none!important}
 @media(prefers-color-scheme:dark){:root{--bg:#202422;--panel:#272d2a;--row:#2a302d;--text:#e3ebe6;--muted:#a0ada5;--line:#3b4540;--green:#8cc9ad;--green-bg:#2a4035;--orange:#e9ad70}.primary,.segbtn.on{color:#17221c}.badge.bad{background:#7a3530;color:#f3d9d6}#feedback.error{background:#45392c}}
@@ -98,8 +94,8 @@ footer{font-size:11px;color:var(--muted);line-height:1.6;flex-shrink:0}
   <div class="sidebar-bottom"><p class="creator">仅用于个人学习，调用本人订阅额度<br>请勿公开、转售或共享令牌</p></div>
 </aside>
 <main>
-  <header><div><h2>灵犀订阅模型</h2><p class="subtitle">勾选模型并选择思维等级；可一键测试后导入 WorkBuddy。</p></div>
-  <div class="actions"><button id="findcfg">读取 WorkBuddy 配置</button></div></header>
+  <header><div><h2>灵犀订阅模型</h2><p class="subtitle">勾选模型并选择思维等级；一键测试（连通性）后导入 WorkBuddy / ZCode。</p></div>
+  <div class="actions"><button id="findcfg">刷新状态</button></div></header>
   <div class="service-status"><span id="service-dot" class="dot off"></span><span id="service-text">正在检测服务…</span>
     <span class="lingxi-state" id="lingxi-state" hidden></span>
     <span class="lingxi-state" id="meta-info" hidden></span></div>
@@ -109,7 +105,7 @@ footer{font-size:11px;color:var(--muted);line-height:1.6;flex-shrink:0}
         <button class="openlogs" id="actToggle" title="切换 实时/历史（历史来自 reqlog.jsonl，跨重启保留）">历史</button>
         <button class="openlogs" id="openLogs">打开日志目录</button>
       </span></h3>
-    <div id="actList"><div class="act-empty">暂无请求记录。从 WorkBuddy 发起对话后，这里会实时显示进行中与最近 20 条请求。</div></div>
+    <div id="actList"><div class="act-empty">暂无请求记录。从 WorkBuddy / ZCode 发起对话后，这里会实时显示进行中与最近 20 条请求。</div></div>
   </div>
   <section class="toolbar">
     <div class="metrics"><div><b id="discovered">0</b><span>已发现</span></div><div><b id="selected">0</b><span>已勾选</span></div><div><b id="imported">0</b><span>已导入</span></div></div>
@@ -128,15 +124,7 @@ footer{font-size:11px;color:var(--muted);line-height:1.6;flex-shrink:0}
   </section>
   <div id="feedback" hidden></div>
   <section id="models" aria-label="模型列表"></section>
-  <div id="testbox">
-    <div class="testrow"><b style="font-size:12.5px">单个对话</b>
-      <select id="testModel"></select>
-      <select id="singleEffort"><option value="">默认等级</option><option value="low">低</option><option value="high">高</option><option value="max">Max</option></select>
-      <input id="testPrompt" value="用一句话介绍你自己。">
-      <button id="runTest">发送</button></div>
-    <div id="testResult">结果将显示在这里。</div>
-  </div>
-  <footer><p id="sync">配置路径：检测中…</p></footer>
+  <footer><p id="sync">配置路径：检测中…</p><p id="syncz" hidden></p></footer>
 </main>
 <script>
 const TOKEN = new URLSearchParams(location.search).get("token") || "";
@@ -149,7 +137,7 @@ async function api(path, opt){ opt=opt||{}; opt.headers=Object.assign({},H,opt.h
 /* ---------- 模型列表 ---------- */
 async function loadModels(){
   const d = await api("/v1/models");
-  const box=$("models"), sel=$("testModel"); box.innerHTML=""; sel.innerHTML="";
+  const box=$("models"); box.innerHTML="";
   d.data.forEach(m=>{
     if(m.id==="auto") return;
     const efs=m.reasoning_efforts||[];
@@ -165,7 +153,6 @@ async function loadModels(){
       <div class="effort-cell">${effortHtml}</div>
       <div class="badges"><span class="badge time" id="t-${m.id}"></span><span class="badge" id="b-${m.id}">待测试</span></div>`;
     box.appendChild(lab);
-    const o=document.createElement("option"); o.value=m.id; o.textContent=m.name; sel.appendChild(o);
   });
   $("discovered").textContent=d.data.filter(x=>x.id!=="auto").length;
   box.querySelectorAll(".model-check").forEach(c=>c.onchange=()=>{c.closest(".model").classList.toggle("selected",c.checked);recount();});
@@ -313,8 +300,15 @@ async function refreshStatus(){
     mi.title=s.gateway_config
       ? `配置文件：${s.gateway_config.path}${s.gateway_config.exists?"（生效）":"（未创建，用默认值）"}`
       : "";
-    $("sync").textContent="配置路径："+s.config.path+(s.config.exists?"（已存在）":"（将在导入时创建）");
+    $("sync").textContent="WorkBuddy："+s.config.path+(s.config.exists?"（已存在）":"（将在导入时创建）");
     $("imported").textContent=s.config.imported.length;
+    // ZCode 状态（次要信息，失败静默）
+    try{
+      const z=await api("/admin/zcode-status");
+      const zs=$("syncz"); zs.hidden=false;
+      zs.textContent="ZCode："+(z.parse_error?("配置文件解析失败")
+        :(z.configured?("已导入 "+z.models.length+" 个模型 · "+z.path):("未导入 · "+z.path)));
+    }catch(e){}
   }catch(e){ $("service-dot").className="dot off"; $("service-text").textContent="服务异常："+e.message; }
 }
 /* ---------- 活动面板（实时 2s 轮询 / 历史来自 reqlog.jsonl） ---------- */
@@ -339,7 +333,7 @@ function renderActivity(d){
   box.hidden=false;
   $("actTitle").textContent=actMode==="live"
     ?(d.active?`活动（进行中 ${d.active}）`:"活动") : "活动 · 历史";
-  if(!d.recent.length){ list.innerHTML='<div class="act-empty">暂无请求记录。从 WorkBuddy 发起对话后，这里会实时显示进行中与最近 20 条请求。</div>'; return; }
+  if(!d.recent.length){ list.innerHTML='<div class="act-empty">暂无请求记录。从 WorkBuddy / ZCode 发起对话后，这里会实时显示进行中与最近 20 条请求。</div>'; return; }
   list.innerHTML=d.recent.map(actRow).join("");
 }
 let actTimer=null;
@@ -358,7 +352,7 @@ $("actToggle").onclick=()=>{
   pollActivity();
 };
 $("openLogs").onclick=async()=>{ try{ await api("/admin/open-logs",{method:"POST"}); }catch(e){ feedback(e.message,true); } };
-$("findcfg").onclick=async()=>{ try{ await api("/admin/find-config",{method:"POST"}); feedback("已读取配置"); refreshStatus(); }catch(e){ feedback(e.message,true);} };
+$("findcfg").onclick=()=>{ refreshStatus(); feedback("状态已刷新"); };
 $("import").onclick=async()=>{
   const sel=selectedKeys(); if(!sel.length) return feedback("请至少勾选一个模型",true);
   $("import").disabled=true;
@@ -376,29 +370,6 @@ $("importZcode").onclick=async()=>{
     feedback(r.hint+(r.backup?"（原配置已备份）":"（无改动）"));
   }catch(e){ feedback(e.message,true); } $("importZcode").disabled=false;
 };
-
-/* ---------- 单个对话 ---------- */
-$("runTest").onclick=async()=>{
-  const model=$("testModel").value, prompt=$("testPrompt").value, ef=$("singleEffort").value;
-  $("testResult").textContent="请求中…";
-  try{
-    const body={model,messages:[{role:"user",content:prompt}],stream:false};
-    if(ef) body.reasoning_effort=ef;
-    const r=await fetch("/v1/chat/completions",{method:"POST",headers:Object.assign({},H,{"Content-Type":"application/json"}),body:JSON.stringify(body)});
-    const o=await r.json(); if(!r.ok) throw new Error(o.detail);
-    $("testResult").textContent=o.choices[0].message.content;
-    const b=$("b-"+model); b.className="badge ok"; b.textContent="可用";
-  }catch(e){
-    $("testResult").textContent="错误："+e.message;
-    const b=$("b-"+model); b.className="badge bad"; b.textContent="失败";
-    // 鉴权类错误：自动展开二维码，点一下扫码即可恢复（无需客户端）
-    if(/登录|扫码|sid|失效/i.test(e.message) && (qrAlive===false || qrBox.hidden)){
-      $("qrBox").hidden=false; startQr();
-      feedback("登录已失效，已为你打开扫码框：用 WPS 手机 APP 扫码即恢复",true);
-    }
-  }
-};
-$("testModel").onchange=()=>{ /* 切换时同步等级可选项，简化处理 */ };
 
 (async()=>{
   try{
