@@ -1,0 +1,8 @@
+### rw via ',rw=' @926985
+,rw={provider:"lingxi",model_name:"max"},xU={plan_pro:iI,lingxi_v2:iI,"lingxi/pro":iI,plan_max:rw,lingxi_v2_thinking:rw,"lingxi/max":rw};function LU(e){const t=e.trim(),n=xU[t]??xU[t.toLowerCase()];if(n)return{provider:n.provider,model_name:n.model_name};const r=t.indexOf("/");return r>0?{provider:t.slice(0,r),model_name:t.slice(r+1)}:{provider:"lingxi",model_name:t}}function Nye(e,t){const n=e??t
+
+### Gye via 'function Gye(' @947662
+function Gye(e,t){const r=(e??t.expect_model)==="custom_model"&&t.custom_model&&typeof t.custom_model=="object"&&!Array.isArray(t.custom_model)?t.custom_model:null;if(!r)return null;const s=typeof r.endpoint=="string"?r.endpoint.trim():"",i=typeof r.model_name=="string"?r.model_name.trim():"",o=typeof r.api_key=="string"?r.api_key:"",a=typeof r.api_format=="string"?r.api_format.trim():"";return!s|
+
+### Nye via 'function Nye(' @927355
+function Nye(e,t){const n=e??t.expect_model;if(n!=="custom_model"){if(n&&typeof n=="object"&&!Array.isArray(n)){const r=n,s=typeof r.provider=="string"?r.provider.trim():"",i=typeof r.model_name=="string"?r.model_name.trim():"";return!s||s==="builtin"?i?LU(i):void 0:n}if(typeof n=="string"&&n.trim()&&n!=="custom_model")return LU(n)}}class sw extends Error{code;constructor(t){super(`Local agent fac

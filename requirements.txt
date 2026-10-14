@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+requests
+pywin32
+cryptography
+websocket-client

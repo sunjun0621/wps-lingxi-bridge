@@ -1,0 +1,46 @@
+# ============================================================
+#  wps-lingxi-bridge · 入库排除清单
+#  说明：本地文件完整保留，仅 Git 层排除，不影响运行
+# ============================================================
+
+# ---------- 运行件（WPS 官方文件：版权 + 体积，勿分发） ----------
+# 运行时自备：将本机 WPS 灵犀安装目录中的 app-server/ 复制到项目根目录
+#（extracted/ 为 app.asar 解包产物，仅供研究，不含原始 WPS 资源的仓库）
+/appserver/
+/extracted/
+
+# ---------- 敏感数据（真实账号 / 登录态 / 对话记录，绝不入库） ----------
+/bridge-runtime/
+/_Cookies.db
+/cookies_decrypted.json
+/current_sid.txt
+/account_login.html
+/raw_rollout.txt
+/sample_sse.txt
+
+# ---------- 过程日志与中间产物 ----------
+*_log.txt
+/chat_log.txt
+/account_probe.txt
+/sessions_now.txt
+/state_report.txt
+/realinput_report.txt
+/gslice_out.txt
+/slice_out.txt
+/common_extract.txt
+/asar_filelist.txt
+
+# ---------- WPS 网页代码提取（版权） ----------
+/common.js
+/kso-sdk.js
+
+# ---------- 缓存 / 备份 / 个人数据 ----------
+__pycache__/
+*.pyc
+/_cleanup_backup/
+/.workbuddy/
+*.bak-*
+
+# ---------- 令牌/凭据交接临时文件（防误提交） ----------
+*.tmp
+/_github_token.txt

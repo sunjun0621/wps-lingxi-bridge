@@ -1,0 +1,532 @@
+===== HOSTS =====
+815	www.w3.org
+510	support.microsoft.com
+267	schemas.openxmlformats.org
+119	github.com
+70	www.apache.org
+60	www.kdocs.cn
+55	qn.cache.wpscdn.cn
+48	schemas.microsoft.com
+41	account.wps.cn
+32	ksogit.kingsoft.net
+29	365.kdocs.cn
+24	a
+20	localhost
+20	chevrotain.io
+19	lingxi.wps.cn
+18	purl.org
+17	support.google.com
+16	feross.org
+16	lingxi.kdocs.cn
+15	account.kdocs.cn
+14	web.wps.cn
+14	127.0.0.1
+13	drive.kdocs.cn
+13	mths.be
+12	svelte.dev
+11	lexical.dev
+10	element-plus.org
+10	drive.wps.cn
+10	account.
+9	plussvr.wps.cn
+9	docs.wps.cn
+9	www.xfa.org
+8	example.com
+8	fonts.gstatic.com
+8	privacy.wps.cn
+8	www-cs-students.stanford.edu
+7	plus.wps.cn
+7	rili.wps.cn
+7	dw-online.ksosoft.com
+7	kvas-api.wps.cn
+6	kmon.kdocs.cn
+6	shuc-js.ksord.com
+6	dw-collect-debug.ksord.com
+6	x
+6	openoffice.org
+5	woa.wps.cn
+5	t.wps.cn
+5	get.wps.cn
+5	api.dingtalk.com
+4	msgevent.wps.cn
+4	todos-api.wps.cn
+4	todos-api.kdocs.cn
+4	cloud.wpscdn.com
+4	lodash.com
+4	kdocs-om.wpscdn.cn
+4	react.dev
+4	ns.adobe.com
+3	stuk.github.io
+3	o.wpsgo.com
+3	en.wikipedia.org
+3	bit.ly
+3	axios-http.com
+3	tiance.kdocs.cn
+3	tiance.wps.cn
+3	wwo.wps.cn
+3	gitbrent.github.io
+3	pypi.tuna.tsinghua.edu.cn
+3	open.feishu.cn
+2	www.chartjs.org
+2	opensource.org
+2	openjsf.org
+2	underscorejs.org
+2	vas-api.kdocs.cn
+2	code.visualstudio.com
+2	redi.wendell.fun
+2	sharejs.org
+2	analyst.wps.cn
+2	temp.com
+2	foo.bar
+2	chromewebstore.google.com
+2	ark.cn-beijing.volces.com
+2	console.volcengine.com
+2	bailian.console.aliyun.com
+2	open.bigmodel.cn
+2	api.skillhub.cn
+2	univer.ai
+2	www.wps.com
+2	sheetjs.com
+2	purl.oclc.org
+2	docs.oasis-open.org
+2	api.wps.cn
+2	api.sgroup.qq.com
+2	reactrouter.com
+1	ppt.wps.cn
+1	plus.kdocs.cn
+1	yorickshan.github.io
+1	help.mail.qq.com
+1	help.mail.163.com
+1	aifinmarket.wind.com.cn
+1	mcp.51ifind.com
+1	vip.tdx.com.cn
+1	wj.qq.com
+1	garden.zsxq.com
+1	mcp.variflight.com
+1	ai.qixin.com
+1	lbsyun.baidu.com
+1	qieman.com
+1	www.mozlen.com
+1	open.zhihuiya.com
+1	www.gildata.com
+1	lbs.amap.com
+1	lbs.qq.com
+1	api.github.com
+1	vas.kdocs.cn
+1	mall.jd.com
+1	securetoken.google.com
+1	firebase.google.com
+1	firebaseinstallations.googleapis.com
+1	firebase.googleapis.com
+1	www.googletagmanager.com
+1	api.example.com
+1	vuejs.org
+1	lea.verou.me
+1	langium.org
+1	engelschall.com
+1	jquery.org
+1	tldrlegal.com
+1	www.kocs.cn
+1	dw-collect.ksord.com
+1	docx
+1	microsoft.com
+1	www.wps.cn
+1	stuartk.com
+1	raw.github.com
+1	entry.wpscdn.com
+1	reactjs.org
+1	localforage.github.io
+1	mozilla.github.io
+1	kuc.wps.cn
+1	universheet.net
+1	api-kos.wps.cn
+1	cdn.jsdelivr.net
+1	unpkg.com
+1	bbs.wps.cn
+1	www.huxiu.com
+1	news.qq.com
+1	education.news.cn
+1	mp.weixin.qq.com
+1	microsoftedge.microsoft.com
+1	api.deepseek.com
+1	platform.deepseek.com
+1	api.moonshot.cn
+1	platform.moonshot.cn
+1	api.minimax.chat
+1	platform.minimaxi.com
+1	dashscope.aliyuncs.com
+1	api.lkeap.cloud.tencent.com
+1	cloud.tencent.com
+1	coding.dashscope.aliyuncs.com
+1	...
+1	personal.wpscdn.cn
+1	prosemirror.net
+1	element.eleme.io
+1	fengyuanchen.github.io
+1	code.google.com
+1	crypto-js.googlecode.com
+1	foo.cn
+1	npms.io
+1	global-entry-conf.wpscdn.cn
+1	global-entry-conf.wpscdn.com
+1	kbee.wps.cn
+1	docerserver.kdocs.cn
+1	docer-api.kdocs.cn
+1	docs-dapi.wps.cn
+1	kdocs-vcl.ext.wps.cn
+1	kdocs.cn
+1	woa-static.ks3-cn-beijing.ksyun.com
+1	imagebucket.test.wpscdn.cn
+1	p3-flow-imagex-sign.byteimg.com
+1	macVmlSchemaUri
+1	sheetjs.openxmlformats.org
+1	f.wps.cn
+1	10.213.47.196
+1	connect.rom.miui.com
+1	www.bing.com
+1	agentspace.wps.cn
+1	bots.qq.com
+1	oapi.dingtalk.com
+1	ilinkai.weixin.qq.com
+1	novac2c.cdn.weixin.qq.com
+1	www.trip.com
+1	www.iana.org
+1	deeplink
+1	www.ibm.com
+1	f.kdocs.cn
+1	lingxi.cn
+1	10.23.10.11
+1	renderer-test.example.com
+1	developer.mozilla.org
+
+===== URLS (含 wps/kingsoft/aigc/copilot/ai) =====
+https://365.kdocs.cn/3rd/docs/kdg/api/v1/params/docs_wpsai_protocol
+https://account.wps.cn
+https://account.wps.cn/3rdpartner/sso?utype=${e.utype}&code=${e.code}&cb=${encodeURIComponent(r
+https://account.wps.cn/?${jN}&autologin=false&hidetitle=false&opener=true&cb=${encodeURIComponent(Dn
+https://account.wps.cn/?${jN}&cb=${encodeURIComponent(Dn
+https://account.wps.cn/?cb=${n}
+https://account.wps.cn/p/auth/check
+https://account.wps.cn/plusapi
+https://account.wps.cn/plusapi/cmgr/v1/u/custom-domain/whitelist
+https://account.wps.cn/usercenter/apps?isclient=false
+https://account.wps.cn/v1/realname?from=lingxi&cb=
+https://account.wps.cn/v1/realname?from=lingxi&cb=${encodeURIComponent(location.href
+https://agentspace.wps.cn
+https://ai.qixin.com/mcp
+https://analyst.wps.cn
+https://api-kos.wps.cn/ewb/lingxi/event/callback
+https://api.minimax.chat/v1
+https://api.wps.cn/v7/drives/${encodeURIComponent(n
+https://bbs.wps.cn/topics/node/23?chan=lingxi
+https://cloud.wpscdn.com/entry/wps-global-cloud-service-entry.json
+https://docs-dapi.wps.cn
+https://docs.wps.cn
+https://docs.wps.cn/
+https://docs.wps.cn/crossdomain.html?action=sharePhoneBind&type=certification&from=copilot
+https://drive.wps.cn
+https://entry.wpscdn.com
+https://f.wps.cn/g/fXi56cE2/
+https://get.wps.cn/feedback/m
+https://get.wps.cn/feedback/pc
+https://get.wps.cn/thirdparty/api/v1/feedback/submit/${kf}
+https://global-entry-conf.wpscdn.cn/region/v1/global_service_config
+https://global-entry-conf.wpscdn.com/account/region/v1/global_service_config
+https://imagebucket.test.wpscdn.cn/238660632_143685c0f7d3c42d6ae5b23672f35d8b?imageMogr2/thumbnail/180x180!
+https://kbee.wps.cn
+https://kdocs-om.wpscdn.cn/odimg/web/image_compress/202405161051/customer_service_normal.svg.svg
+https://kdocs-vcl.ext.wps.cn/v1/plugins/2.0.0/index
+https://ksogit.kingsoft.net/frontend/apps-moblie-docs
+https://ksogit.kingsoft.net/frontend/apps-public
+https://ksogit.kingsoft.net/frontend/kso
+https://ksogit.kingsoft.net/web_cloud/cloud
+https://kuc.wps.cn
+https://kvas-api.wps.cn
+https://kvas-api.wps.cn/plugins-config/pay-breaking
+https://kvas-api.wps.cn/plugins-config/pay-counter
+https://lingxi.wps.cn
+https://lingxi.wps.cn/
+https://lingxi.wps.cn/activity/school-season
+https://lingxi.wps.cn/api/aioffice/v1/short_link/
+https://lingxi.wps.cn/api/logs/v1/logs
+https://lingxi.wps.cn/claw
+https://lingxi.wps.cn/collection?openCollection=${t.data.collect_id}
+https://lingxi.wps.cn/official/#plugins
+https://msgevent.wps.cn
+https://o.wpsgo.com
+https://open.bigmodel.cn
+https://open.bigmodel.cn/api/coding/paas/v4
+https://personal.wpscdn.cn/app/user-operation-monos-components-identity-card//dynamic-imports/dw.es.js
+https://plus.wps.cn
+https://plussvr.wps.cn
+https://plussvr.wps.cn/cmgr/v1/devices-code/compute
+https://plussvr.wps.cn/svr/api/v1/pubkey
+https://ppt.wps.cn
+https://privacy.wps.cn/policies/agreements/WPS-AI
+https://privacy.wps.cn/policies/agreements/lingxi-pay
+https://privacy.wps.cn/policies/agreements/lingxi-pay-auto
+https://privacy.wps.cn/policies/filing/WPS-AI
+https://privacy.wps.cn/policies/privacy/WPS-AI
+https://qn.cache.wpscdn.cn
+https://qn.cache.wpscdn.cn/copilot/copilot/assets
+https://qn.cache.wpscdn.cn/copilot/copilot/assets/watermark-dark-DeIOW3Tu.png
+https://qn.cache.wpscdn.cn/copilot/copilot/assets/watermark-light-DNBB3Qcp.png
+https://qn.cache.wpscdn.cn/koa/open-admin/static
+https://qn.cache.wpscdn.cn/lingxi-ai/network/network-probe.txt
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/html/element-capture@0.0.2.html
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/html/html-preview@0.0.6.html
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/html/pptagent-preview@0.0.7.html
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/deepseekV4ProGuide/
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/expertModeGuide/groupChatGuide_1x-7363697f.png
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/expertModeGuide/groupChatGuide_2x-0c8ee5b9.png
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/expertModeGuide/groupChatGuide_3x-61ddd887.png
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/expertModeGuide/groupChatGuide_dark_1x-4c4fde61.png
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/expertModeGuide/groupChatGuide_dark_2x-ee0aa0f7.png
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/expertModeGuide/groupChatGuide_dark_3x-91a33618.png
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/foryou/foryou_doc.png?imageMogr2/format/webp
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/foryou/foryou_doc_black.png?imageMogr2/format/webp
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/foryou/foryou_excel.png?imageMogr2/format/webp
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/foryou/foryou_excel_black.png?imageMogr2/format/webp
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/foryou/foryou_other.png?imageMogr2/format/webp
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/foryou/foryou_other_black.png?imageMogr2/format/webp
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/foryou/foryou_pic.png?imageMogr2/format/webp
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/foryou/foryou_pic_black.png?imageMogr2/format/webp
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/foryou/foryou_ppt.png?imageMogr2/format/webp
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/foryou/foryou_ppt_black.png?imageMogr2/format/webp
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/foryou/foryou_read.png?imageMogr2/format/webp
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/foryou/foryou_read_black.png?imageMogr2/format/webp
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/foryou/foryou_search.png?imageMogr2/format/webp
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/copilot_spring/foryou/foryou_search_black.png?imageMogr2/format/webp
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/default
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/home-capsule-case-covers
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/home-featured-cases
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/images/with_echo/withecho-lingxi-scenario-flow-final-2x.png
+https://qn.cache.wpscdn.cn/lingxi-app/copilot-cdn/lingxi-purple-install-tutorial.mp4
+https://qn.cache.wpscdn.cn/lingxi-app/desktop-renderer/…/release.json
+https://qn.cache.wpscdn.cn/lingxi-app/lingxi-browser-extension/lingxi-browser-extension-1.0.2-e91dea5-local.zip
+https://qn.cache.wpscdn.cn/mbapp/test/vip/vas_pay_breaking/d7c50de/entry.umd.min.js
+https://qn.cache.wpscdn.cn/mbapp/test/vip/vas_pay_counter/30f6c5e/entry.umd.min.js
+https://qn.cache.wpscdn.cn/mbapp/vip/vas_pay_counter/582fb80/entry.umd.min.js
+https://rili.wps.cn
+https://t.wps.cn
+https://tiance.wps.cn
+https://todos-api.wps.cn
+https://univer.ai/
+https://web.wps.cn
+https://web.wps.cn/l/
+https://web.wps.cn/l/${d.id}
+https://web.wps.cn/l/${e.value}
+https://wj.qq.com/ai/skill
+https://woa.wps.cn
+https://wwo.wps.cn/docs/front-end/basic-usage/events/intro/
+https://www.wps.cn/learning/course/detail/id/340.html?chan=pc_kdocs_function
+https://www.wps.com/premium
+
+===== API PATHS =====
+/3rd/docer-api
+/_desktop/lingxi/assets/channel_wechat-zXP3boVm.png
+/advanced/chat
+/advanced/chat/
+/aioffice/chat
+/aioffice/chat/
+/api
+/api/
+/api/adm/
+/api/aigc
+/api/aigc/
+/api/aigc/v3/assistant/ai_analytics/repos
+/api/aigc/v3/assistant/aidocs/entry
+/api/aigc/v3/assistant/files/upload
+/api/aigc/v3/assistant/identity
+/api/aigc/v3/assistant/mcp
+/api/aigc/v3/assistant/official_doc/knowledge_search
+/api/aigc/v3/assistant/official_doc/redheadfile_tmpl
+/api/aigc/v3/assistant/search
+/api/aigc/v3/assistant/sessions
+/api/aigc/v3/assistant/sessions/:id/completions
+/api/aigc/v3/assistant/sessions/:sessionId/completions
+/api/aigc/v3/assistant/sessions/images
+/api/aigc/v3/copilot/sessions
+/api/aigc/v3/ents/expert_sessions
+/api/aigc/v3/ents/sessions/images
+/api/aioffice/v1
+/api/aioffice/v1/cowork
+/api/aioffice/v1/cowork/app-server/versions
+/api/aioffice/v1/cowork/profile
+/api/aioffice/v1/cowork/sessions
+/api/aioffice/v1/cowork/users/token
+/api/aioffice/v1/custom_model/test
+/api/aioffice/v1/drive/files
+/api/aioffice/v1/feedbacks
+/api/aioffice/v1/feedbacks/ks3url
+/api/aioffice/v1/file/recommend
+/api/aioffice/v1/memory/migrate
+/api/aioffice/v1/memory/prepare-compile
+/api/aioffice/v1/message_center
+/api/aioffice/v1/ppt/html_theme_tpl
+/api/aioffice/v1/ppt/image_theme_tpl
+/api/aioffice/v1/sandbox/file/preview
+/api/aioffice/v1/sessions
+/api/aioffice/v1/sessions/
+/api/aioffice/v1/sessions/plans
+/api/aioffice/v1/user/groups
+/api/certification
+/api/channel/v1
+/api/company
+/api/contact/relation/info
+/api/contact/relation/last_add
+/api/contact/relation/last_list
+/api/contact/relation/name/update
+/api/contact/relation/search
+/api/contact/v2/group/batch/search
+/api/contact/v2/relation/recent/list
+/api/debug
+/api/dynamicParam/v1/app/
+/api/imchat/v1
+/api/imchat/v1/ws
+/api/kdocs/
+/api/office/
+/api/public/v1
+/api/public/v1/agents
+/api/public/v1/credits
+/api/public/v1/memory/status
+/api/public/v1/projects
+/api/public/v1/sessions
+/api/public/v1/settings
+/api/public/v1/skills/inspect
+/api/public/v1/tasks
+/api/skills
+/api/user/userinfo
+/api/users/redirect
+/api/v1/
+/api/v1/3rd/users/
+/api/v1/companies/
+/api/v1/recent/contacts/mixed
+/api/v2/
+/api/v2/recent/contacts/mixed
+/api/v3/
+/api/v3/favorite
+/api/v3/groups/
+/api/v3/groups/0/members
+/api/v3/groups/secret
+/api/v3/groups/secret/lock
+/api/v3/groups/secret/unlock
+/api/v3/groups/special
+/api/v3/groups/tmp
+/api/v3/islogin
+/api/v3/links/
+/api/v3/office/asynctasks/
+/api/v3/office/file/
+/api/v3/roaming
+/api/v3/search/company/
+/api/v3/search/files
+/api/v3/search/groups/
+/api/v3/spaces
+/api/v3/tags/1/items
+/api/v3/userinfo
+/api/v5/companies
+/api/v5/corpgroups/corpindex
+/api/v5/files/
+/api/v5/files/folder
+/api/v5/folder_link_tree/
+/api/v5/groups
+/api/v5/groups/
+/api/v5/groups/linkfolders
+/api/v5/groups/special/files
+/api/v5/groups/tmp/devices
+/api/v5/groups/tmp/devices/
+/api/v5/links
+/api/v5/links/
+/api/v5/links/softlink/
+/api/v5/roaming
+/api/v5/search/files/quick
+/chat
+/chat/
+/client-update-dialog
+/completions
+/copilot-api/office/v5/ai/skills/marketplace
+/dce/exec/api/market/activity
+/dialog
+/filetag/api/
+/group-chat/join/
+/kd/api/user/config
+/kd/api/wenjuan/user
+/kdg/api/v1/cards/king-skin
+/kdg/api/v1/configure
+/kdg/api/v1/params/MusaConfig
+/kdg/api/v1/params/baseOperation/sub_keys
+/kdg/api/v1/params/square/sub_keys
+/kdg/api/v1/square/event/check
+/kdg/api/v1/user/setting
+/kdicon/pro/v4/share_wechat_ai.png
+/kdicon/pro/v4/share_wechat_caj.png
+/kdicon/pro/v4/share_wechat_mail.png
+/kdicon/pro/v4/share_wechat_psd.png
+/kdteam/api/v1/folder/selector
+/kdteam/api/v1/folder/selector/
+/kdteam/api/v1/team/
+/kdteam/api/v1/teams
+/lingxi-chat
+/model
+/office/message/msgcenter
+/ops/opsd/api/v1/policy
+/passport/secure/api/grant_token
+/passport/secure/api/switch_user
+/query/api/v1/list_entity_consumed_flow
+/query/api/v1/list_merchandise
+/query/api/v1/list_privilege_consumed_flow
+/query/api/v1/list_privilege_effected
+/query/api/v1/list_privilege_info
+/solution/api/aigc/v3/assistant/ppt
+/solution/api/aigc/v3/assistant/ppt/theme_tpl/config
+/solution/api/aigc/v3/assistant/sessions
+/svr/api/v1/pubkey
+/task/chat
+/workspace/source/kdesign-kdesign-vue3/packages/components/dialog/src/dialog-content.vue
+/workspace/source/kdesign-kdesign-vue3/packages/components/dialog/src/dialog.vue
+/workspace/source/kdesign-kdesign-vue3/packages/components/message/src/message.vue
+
+===== AUTH KEYWORD FILES =====
+/desktop-renderer-dist/assets/PCanvasContainerWeboffice-5JdeTrPH.js	['signature']
+/desktop-renderer-dist/assets/PCanvasContainerWeboffice-BXarehBY.js	['signature']
+/desktop-renderer-dist/assets/PClawConnectorCustomDialog-q4RsaYE5.js	['authorization', 'bearer']
+/desktop-renderer-dist/assets/PGitHubImportModal-De0C3i5t.js	['authorization', 'bearer']
+/desktop-renderer-dist/assets/PGroupChatPage-CPhvg_NR.js	['signature']
+/desktop-renderer-dist/assets/PHtmlpptContainer-DZkefAob.js	['signature']
+/desktop-renderer-dist/assets/PMemberSelectorModal-D-6xQbIQ.js	['authorization', 'csrf', 'set-cookie', 'x-csrf']
+/desktop-renderer-dist/assets/PMessageAIMarkdown.vue_vue_type_style_index_0_scoped_ff13a2eb_lang-Bsf-g0rE.js	['authorization', 'set-cookie']
+/desktop-renderer-dist/assets/PMessageAIMarkdownPure-Bsa8Ktt0.js	['authorization']
+/desktop-renderer-dist/assets/PMessageSkillResult-CChleX9Q.js	['signature']
+/desktop-renderer-dist/assets/PWithEchoPage-A1lJZzi4.js	['authorization']
+/desktop-renderer-dist/assets/WebReporter-5pdPgwnl-BkcFAONU.js	['authorization', 'signature']
+/desktop-renderer-dist/assets/chunk-common-DKMkES5u.js	['signature']
+/desktop-renderer-dist/assets/chunk-kdocs-BKKiUq6b.js	['authorization', 'csrf', 'set-cookie', 'x-csrf']
+/desktop-renderer-dist/assets/chunk-lexical-CNzTAhG8.js	['authorization']
+/desktop-renderer-dist/assets/cynefin-VYW2F7L2-BSGWfDlf.js	['signature']
+/desktop-renderer-dist/assets/docfinder-03facc3a.js	['authorization', 'csrf', 'set-cookie', 'signature', 'x-csrf']
+/desktop-renderer-dist/assets/docfinder.es-DlbA_a1j.js	['authorization', 'csrf', 'set-cookie', 'signature', 'x-csrf']
+/desktop-renderer-dist/assets/editor.api-CAoPDZ1H.js	['signature']
+/desktop-renderer-dist/assets/entry.umd.min-BVeGIM-A-B8U-DQq7.js	['authorization', 'csrf', 'set-cookie', 'signature', 'x-csrf']
+/desktop-renderer-dist/assets/exceljs.min-Dj3tLNe1.js	['signature']
+/desktop-renderer-dist/assets/index-DcFsGBB9.js	['signature']
+/desktop-renderer-dist/assets/index-DrFFSP-G.js	['signature']
+/desktop-renderer-dist/assets/index-J0vg6fGi.js	['authorization', 'set-cookie']
+/desktop-renderer-dist/assets/index-t1EPSQPf.js	['authorization', 'csrf', 'set-cookie', 'signature']
+/desktop-renderer-dist/assets/index.a304e721.js	['authorization', 'csrf', 'set-cookie', 'signature', 'signkey', 'x-csrf']
+/desktop-renderer-dist/assets/jszip.min-VqPWt14R.js	['signature']
+/desktop-renderer-dist/assets/kso-acct-sdk.esm-D6UpSMqr-BSaKiKN8.js	['authorization', 'set-cookie']
+/desktop-renderer-dist/assets/kso-acct-sdk.esm-Ffum05qC.js	['authorization', 'set-cookie']
+/desktop-renderer-dist/assets/pdf.worker.min-CLrFZWeq.mjs	['signature']
+/desktop-renderer-dist/assets/pgsql-BlNEE0v7.js	['authorization']
+/desktop-renderer-dist/assets/redshift-Bs9aos_-.js	['authorization']
+/desktop-renderer-dist/assets/selector.f633a0bf.js	['authorization', 'csrf', 'set-cookie', 'signature', 'x-csrf']
+/desktop-renderer-dist/assets/sophia-CnS9iZB_.js	['signature']
+/desktop-renderer-dist/assets/sql-ClhHkBeG.js	['authorization']
+/desktop-renderer-dist/assets/useCoworkErrorMessage-H5g-PNQj.js	['x-sign']
+/desktop-renderer-dist/assets/useDesktopLocalImagePreviewPlatform-B2dKjE0k.js	['authorization']
+/desktop-renderer-dist/assets/xlsx-pHrSH2_J.js	['signature']
+/desktop-renderer-dist/js/chunk-7477ef37.560ac671.js	['authorization']
+/out/main/index.js	['access-token', 'access_token', 'accesstoken', 'authorization', 'bearer', 'csrf', 'set-cookie', 'signature']
+/out/preload/index.js	['accesstoken']
+/out/renderer/assets/index-DdPxL_O-.js	['access_token', 'accesstoken', 'authorization']

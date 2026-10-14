@@ -1,0 +1,55 @@
+===== 接口路径 =====
+/api/switch
+/api/v3/channel
+/api/v3/channel/wait
+/api/v3/login_qrcode
+/api/v3/login_qrcode/login
+/api/v3/login_qrcode/url
+/api/v3/qrcode/config
+/api/v4/phone/region/list
+/api/wechat/oauth/qrcode
+/p/oauth/wechatmp_qrcode
+/p/oauth/wechatmp_qrcode/v2/check
+api/agreement/latest
+api/authcode/qrcode/img
+api/session/exchange/login
+api/switch
+api/user/agreement
+api/v3/miniprogram/code/img
+api/v3/oauth/verify
+api/v3/sms/verify
+api/wechat/qr/config
+api/wechat/qr/label_data
+p/auth/check
+p/oauth/url
+p/sms
+passport/secure/api/grant_token
+
+--- qrcode @14986 ---
+,"Noto Sans Myanmar",Padauk,sans-serif}
+</style><style>
+body.phoneClient{background:#fff}.miniprogramWrap{display:none}.miniprogram_code_login_block .qrcode_img_block{position:relative;width:200px;height:200px;margin-left:auto;margin-right:auto}.miniprogram_code_login_block .miniprogram_desc_item{margin-top:40px}.miniprogram_code_login_block .info_
+
+--- qrcode @15222 ---
+ght:auto}.miniprogram_code_login_block .miniprogram_desc_item{margin-top:40px}.miniprogram_code_login_block .info_wrap,.miniprogram_code_login_block .qrcode_wrap{text-align:center}.miniprogram_code_login_block .qrcode_expired_img{display:none;width:100%;height:100%;background:url(//ac.wpscdn.cn/account/libs/img/v2/wxqrcode/qrcode-expired.36decefc.p
+
+--- qrcode @15283 ---
+{margin-top:40px}.miniprogram_code_login_block .info_wrap,.miniprogram_code_login_block .qrcode_wrap{text-align:center}.miniprogram_code_login_block .qrcode_expired_img{display:none;width:100%;height:100%;background:url(//ac.wpscdn.cn/account/libs/img/v2/wxqrcode/qrcode-expired.36decefc.png) no-repeat;background-size:100%;cursor:pointer}.h5_qrcode_
+
+--- scan @16066 ---
+pired_img{display:block}.icon_circle_block{display:block;width:100%;height:100%;background:url(//ac.wpscdn.cn/account/libs/img/v2/wxqrcode/miniqrocde_scan.db8ad0f4.png) no-repeat;background-size:100%}@media all and (-webkit-min-device-pixel-ratio:2){.icon_circle_block{background:url(//ac.wpscdn.cn/account/libs/img/v2/wxqrcode/miniqrocde_scan_x2.d02
+
+--- scan @16255 ---
+-size:100%}@media all and (-webkit-min-device-pixel-ratio:2){.icon_circle_block{background:url(//ac.wpscdn.cn/account/libs/img/v2/wxqrcode/miniqrocde_scan_x2.d025c973.png) no-repeat;background-size:100%}.miniprogram_code_login_block .expired_code .qrcode_expired_img{background:url(//ac.wpscdn.cn/account/libs/img/v2/wxqrcode/qrcode-expired_x2.59cc98
+
+--- scan @18306 ---
+.icon_weixinqrcode_phone{display:block;width:180px;height:180px;margin:40px auto;background:url('//ac.wpscdn.cn/account/libs/img/v2/wxqrcode/wxqrcode_scan.195a9100.png') no-repeat;background-size:100%}.wx_qrcode_info_desc_bottom{cursor:pointer}@media only screen and (max-width:350px){.icon_weixinqrcode_phone,.icon_wxqrcode_warn{margin:0 auto 10px}}
+
+--- grant_token @118522 ---
+names:o},common.ajax)}()]).then(function(o){var n=(window.common.originAccountDomainHref||common.getBaseUrl(window.overseaHost))+"passport/secure/api/grant_token",o=JSON.stringify(Object.assign({grant_type:"authorization_code",code:a,code_verifier:i,is_append:u,login_scenario:"qr"},o[0]));common.ajax({url:n,data:o,dataType:"json",type:"POST",header
+
+--- grant_token @125106 ---
+ window.AccountPotocols.handleAgreement({names:o},common.ajax)}()]).then(function(o){var n=common.getBaseUrl(window.overseaHost)+"passport/secure/api/grant_token",o=JSON.stringify(Object.assign({grant_type:"authorization_code",code:e,code_verifier:c,is_append:p,login_scenario:"qr"},o[0]));common.ajax({url:n,data:o,dataType:"json",type:"POST",header
+
+--- grant_token @130287 ---
+s&&o.result?(e=o.result.auth_code,common.buildPassportSignParams(e).then(function(o){var n=common.getBaseUrl(window.overseaHost)+"passport/secure/api/grant_token",o=JSON.stringify(Object.assign({grant_type:"authorization_code",code:e,code_verifier:codeVerifier,login_scenario:"web_quick"},o)),t=a.cb||window.appConfig.defaultUrl;common.ajax({url:n,da
