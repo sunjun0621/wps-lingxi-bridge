@@ -136,8 +136,10 @@ REQLOG_MAX_BYTES = int(REQLOG_MAX_MB * 1024 * 1024)
 VALID_EFFORTS = ("low", "high", "max")
 START_TIME = time.time()
 
-# key -> 展示名
-MODELS = [
+# 模型清单：优先 bridge-runtime/models.json（可选），缺失/损坏时回落内置清单。
+# 热重载：models.json / plans.json 的 mtime 变化时自动重读；另有 POST /admin/reload-models 手动触发。
+MODELS_FILE = os.path.join(RT, "models.json")
+DEFAULT_MODELS = [
     ("auto", "自动"),
     ("deepseek-v4-flash-0731", "DeepSeek V4 Flash"),
     ("deepseek-v4.1-flash", "DeepSeek V4.1 Flash"),
@@ -151,11 +153,12 @@ MODELS = [
     ("doubao_seed_2_1_pro_260628", "Doubao-Seed-2.1 Pro"),
     ("kimi-k3", "Kimi-K3"),
 ]
-MODEL_KEYS = {k for k, _ in MODELS}
+_models_lock = threading.Lock()
+_models_cache = {"mtime": "未加载"}
 
 
-def load_efforts():
-    """从 plans.json 读取每模型支持的思维等级。"""
+def _load_plans_efforts():
+    """从 plans.json 读取每模型支持的思维等级（灵犀云端套餐缓存）。"""
     eff = {}
     p = os.path.join(ROOT, "plans.json")
     if os.path.exists(p):
@@ -168,12 +171,74 @@ def load_efforts():
                     eff[m["key"]] = [x for x in e if x in VALID_EFFORTS]
         except Exception:
             pass
-    for k, _ in MODELS:
-        eff.setdefault(k, [])
     return eff
 
 
-MODEL_EFFORTS = load_efforts()
+def _load_models_file():
+    """读 models.json（可选）。支持 [{"key","name","efforts"?}] 或 [["key","name"],...]。
+    文件不存在返回 None；损坏时提示并返回 None（回落内置）。"""
+    if not os.path.exists(MODELS_FILE):
+        return None
+    try:
+        d = json.load(open(MODELS_FILE, encoding="utf-8"))
+        items = d.get("models") if isinstance(d, dict) else d
+        out = []
+        for m in items or []:
+            if isinstance(m, dict) and m.get("key"):
+                eff = m.get("efforts")
+                eff = [e for e in eff if e in VALID_EFFORTS] if isinstance(eff, list) else None
+                out.append((str(m["key"]), str(m.get("name") or m["key"]), eff))
+            elif isinstance(m, (list, tuple)) and len(m) >= 2:
+                out.append((str(m[0]), str(m[1]), None))
+        if out:
+            return out
+        print(f"[模型] {MODELS_FILE} 中没有有效模型条目，改用内置清单")
+    except Exception as e:
+        print(f"[模型] {MODELS_FILE} 读取失败，改用内置清单：{e}")
+    return None
+
+
+def load_models_and_efforts():
+    """返回 ((key,name) 列表, 档位映射, 清单来源)。档位优先级：models.json > plans.json > 空。"""
+    entries = _load_models_file()
+    source = "models.json" if entries else "内置"
+    if not entries:
+        entries = [(k, n, None) for k, n in DEFAULT_MODELS]
+    plans_eff = _load_plans_efforts()
+    models, efforts = [], {}
+    for k, n, eff in entries:
+        models.append((k, n))
+        efforts[k] = eff if eff is not None else plans_eff.get(k, [])
+    return models, efforts, source
+
+
+MODELS, MODEL_EFFORTS, MODELS_SOURCE = load_models_and_efforts()
+MODEL_KEYS = {k for k, _ in MODELS}
+
+
+def _models_mtime():
+    try:
+        return tuple(os.path.getmtime(p) if os.path.exists(p) else None
+                     for p in (MODELS_FILE, os.path.join(ROOT, "plans.json")))
+    except OSError:
+        return None
+
+
+_models_cache["mtime"] = _models_mtime()   # 首帧完成，进入 mtime 对比模式
+
+
+def refresh_models(force=False):
+    """热重载：models.json / plans.json 有变化才重读（force=True 强制）。返回是否刷新。"""
+    global MODELS, MODEL_KEYS, MODEL_EFFORTS, MODELS_SOURCE
+    mt = _models_mtime()
+    with _models_lock:
+        if not force and mt == _models_cache["mtime"]:
+            return False
+        MODELS, MODEL_EFFORTS, MODELS_SOURCE = load_models_and_efforts()
+        MODEL_KEYS = {k for k, _ in MODELS}
+        _models_cache["mtime"] = mt
+    print(f"[模型] 清单已重载（{MODELS_SOURCE}，{len(MODELS)} 个模型）")
+    return True
 
 
 def save_sid(sid):
@@ -748,6 +813,7 @@ def _run_tests(models, effort_map, prompt):
 
 @app.post("/admin/test-all")
 async def test_all(request: Request):
+    refresh_models()
     body = await request.json()
     models = body.get("models", [])
     models = [m for m in models if m in MODEL_KEYS and m != "auto"]
@@ -791,6 +857,8 @@ def admin_status():
                                "sources": dict(CONFIG_SOURCES)},
             "activity": {"active": act["active"]},
             "lingxi": _lingxi_state(),
+            "models_source": MODELS_SOURCE,
+            "models_file": MODELS_FILE,
             "config": workbuddy_sync.imported_status()}
 
 
@@ -847,8 +915,17 @@ def admin_find_config():
     return {"path": p, "exists": exists}
 
 
+@app.post("/admin/reload-models")
+def admin_reload_models():
+    """手动重载模型清单（改完 bridge-runtime/models.json 调一下即生效，无需重启）。"""
+    changed = refresh_models(force=True)
+    return {"reloaded": changed, "source": MODELS_SOURCE, "count": len(MODELS),
+            "models": [k for k, _ in MODELS]}
+
+
 @app.post("/admin/import")
 async def admin_import(request: Request):
+    refresh_models()
     body = await request.json()
     selected = body.get("selected", [])
     force = bool(body.get("force", False))
@@ -867,6 +944,7 @@ def admin_zcode_status():
 
 @app.post("/admin/import-zcode")
 async def admin_import_zcode(request: Request):
+    refresh_models()
     body = await request.json()
     selected = [m for m in body.get("selected", []) if m in MODEL_KEYS and m != "auto"]
     if not selected:
@@ -881,6 +959,7 @@ async def admin_import_zcode(request: Request):
 # ---------------- OpenAI 兼容接口 ----------------
 @app.get("/v1/models")
 def list_models():
+    refresh_models()
     return {"object": "list", "data": [
         {"id": k, "object": "model", "created": 0, "owned_by": "lingxi",
          "name": name, "reasoning_efforts": MODEL_EFFORTS.get(k, [])}
@@ -896,6 +975,7 @@ def sse_chunk(model, delta=None, finish=None):
 
 @app.post("/v1/chat/completions")
 async def chat(request: Request):
+    refresh_models()   # 清单有变自动重读（mtime 对比，无变化时开销仅两次 stat）
     body = await request.json()
     model = body.get("model", "deepseek-v4-pro-0813")
     if model not in MODEL_KEYS:

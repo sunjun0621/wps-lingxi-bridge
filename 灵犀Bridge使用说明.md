@@ -167,6 +167,11 @@
   `log_enabled`（日志落盘开关）/ `log_max_mb`（轮转阈值）/ `reqlog_enabled` / `reqlog_max_mb` / `reqlog_keep_days`。
   **优先级：环境变量 > gateway.json > 内置默认**,启动窗口会逐行打印每一项的生效来源；
   改完文件重启网关生效。模板见项目根目录 `gateway.example.json`(复制改名即可)。
+- **模型清单配置化（models.json）**：可选文件 `bridge-runtime/models.json`，
+  格式见根目录 `models.example.json`(key / 展示名 / 可选档位数组)。
+  **改完保存即热重载**（下次请求自动重读，无需重启；也可 `POST /admin/reload-models` 手动触发）；
+  不提供此文件时用内置 12 模型清单；文件损坏时自动回落内置并提示，网关不受影响。
+  模型档位缺省时自动用 `plans.json` 的缓存填充。
 
 ---
 
@@ -181,6 +186,7 @@
 | `workbuddy_sync.py` | 定位/合并/备份/写入 WorkBuddy models.json |
 | `zcode_sync.py` | 写入 ZCode 自定义供应商（provider_config.json，幂等合并+备份+ZCode 运行检测） |
 | `gateway.example.json` | 可选配置模板（复制为 `bridge-runtime/gateway.json` 生效） |
+| `models.example.json` | 可选模型清单模板（复制为 `bridge-runtime/models.json` 生效，保存即热重载） |
 | `console.html` | 可视化控制台（含活动面板 · 结果持久化恢复） |
 | `check_deps.py` | 依赖全量体检（`python check_deps.py`，列 6 包状态 + 清华源命令） |
 | `plans.json` | 云端套餐与每模型思维等级缓存 |

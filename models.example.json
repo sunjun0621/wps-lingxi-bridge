@@ -1,0 +1,18 @@
+{
+  "_说明": "灵犀 Bridge 可选模型清单。复制为 bridge-runtime/models.json 后生效（改完保存即热重载，无需重启；也可调 POST /admin/reload-models 手动触发）。不提供此文件时用内置清单。",
+  "_字段": "key=模型 key（必填，与灵犀云端一致）; name=控制台展示名; efforts=该模型支持的思维等级数组（可选，缺省则用 plans.json 缓存自动填充；自适应模型给 []）",
+  "models": [
+    {"key": "auto", "name": "自动"},
+    {"key": "deepseek-v4-flash-0731", "name": "DeepSeek V4 Flash", "efforts": ["low", "high", "max"]},
+    {"key": "deepseek-v4.1-flash", "name": "DeepSeek V4.1 Flash", "efforts": ["low", "high", "max"]},
+    {"key": "deepseek-v4-pro-0813", "name": "DeepSeek V4 Pro", "efforts": ["low", "high", "max"]},
+    {"key": "qwen3.8_flash", "name": "Qwen3.8-Flash", "efforts": ["low", "high", "max"]},
+    {"key": "qwen3.8_max", "name": "Qwen3.8-Max", "efforts": ["low", "high", "max"]},
+    {"key": "mimo-v2.6-pro", "name": "Xiaomi MiMo-V2.6 Pro", "efforts": []},
+    {"key": "GLM-5.3-Flash", "name": "GLM-5.3-Flash", "efforts": ["low", "high", "max"]},
+    {"key": "GLM-5.3", "name": "GLM-5.3", "efforts": ["low", "high", "max"]},
+    {"key": "minimax_m3", "name": "MiniMax-M3", "efforts": []},
+    {"key": "doubao_seed_2_1_pro_260628", "name": "Doubao-Seed-2.1 Pro", "efforts": ["low", "high", "max"]},
+    {"key": "kimi-k3", "name": "Kimi-K3", "efforts": ["low", "high", "max"]}
+  ]
+}

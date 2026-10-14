@@ -95,7 +95,7 @@ footer{font-size:11px;color:var(--muted);line-height:1.6;flex-shrink:0}
 </aside>
 <main>
   <header><div><h2>灵犀订阅模型</h2><p class="subtitle">勾选模型并选择思维等级；一键测试（连通性）后导入 WorkBuddy / ZCode。</p></div>
-  <div class="actions"><button id="findcfg">刷新状态</button></div></header>
+  <div class="actions"><button id="copyAccess" title="复制 Base URL 与 API Key，用于 dsh 等客户端接入">复制接入信息</button><button id="findcfg">刷新状态</button></div></header>
   <div class="service-status"><span id="service-dot" class="dot off"></span><span id="service-text">正在检测服务…</span>
     <span class="lingxi-state" id="lingxi-state" hidden></span>
     <span class="lingxi-state" id="meta-info" hidden></span></div>
@@ -110,7 +110,7 @@ footer{font-size:11px;color:var(--muted);line-height:1.6;flex-shrink:0}
   <section class="toolbar">
     <div class="metrics"><div><b id="discovered">0</b><span>已发现</span></div><div><b id="selected">0</b><span>已勾选</span></div><div><b id="imported">0</b><span>已导入</span></div></div>
     <div class="tool-actions">
-      <select id="testEffort" title="一键测试统一等级（留空用各模型已选等级）">
+      <select id="testEffort" title="仅影响「一键测试」：选择后统一覆盖所有模型的测试等级；留空则按各模型行已选等级（均不影响导入的模型配置）">
         <option value="">测试等级：各模型</option>
         <option value="low">统一：低</option>
         <option value="high">统一：高</option>
@@ -143,9 +143,9 @@ async function loadModels(){
     const efs=m.reasoning_efforts||[];
     let effortHtml;
     if(efs.length){
-      effortHtml = `<div class="seg">` + efs.map(e=>`<button class="segbtn" data-k="${m.id}" data-e="${e}">${EFF_LABEL[e]}</button>`).join("") + `</div>`;
+      effortHtml = `<div class="seg" title="该模型的一键测试等级（不选=云端默认；仅影响测试，不影响导入）">` + efs.map(e=>`<button class="segbtn" data-k="${m.id}" data-e="${e}">${EFF_LABEL[e]}</button>`).join("") + `</div>`;
     } else {
-      effortHtml = `<span class="adaptive">自适应思考</span>`;
+      effortHtml = `<span class="adaptive" title="该模型自适应思考，无手动档位">自适应思考</span>`;
     }
     const lab=document.createElement("div"); lab.className="model selected";
     lab.innerHTML=`<input class="model-check" type="checkbox" data-k="${m.id}" checked>
@@ -279,14 +279,15 @@ function applyBadges(results){
   Object.entries(results).forEach(([k,r])=>{
     const b=$("b-"+k), tm=$("t-"+k);
     if(!b) return;
+    const when=r.at?`（测于 ${r.at}）`:"";
     if(r.ok){
       b.className="badge ok"; b.textContent="可用";
       if(tm){
         tm.textContent=r.elapsed+"s"+(r.chars?(" · "+r.chars+"字"):"");
-        tm.title=probeTitle(r); b.title=probeTitle(r);
+        tm.title=probeTitle(r)+when; b.title=probeTitle(r)+when;
       }
     }
-    else { b.className="badge bad"; b.textContent="失败"; b.title=(r.hint||"")+(r.error||""); }
+    else { b.className="badge bad"; b.textContent="失败"; b.title=((r.hint||"")+(r.error||"")).trim()+when; }
   });
 }
 async function refreshStatus(){
@@ -353,6 +354,18 @@ $("actToggle").onclick=()=>{
 };
 $("openLogs").onclick=async()=>{ try{ await api("/admin/open-logs",{method:"POST"}); }catch(e){ feedback(e.message,true); } };
 $("findcfg").onclick=()=>{ refreshStatus(); feedback("状态已刷新"); };
+$("copyAccess").onclick=async()=>{
+  const base=location.origin+"/v1";
+  const text=`Base URL: ${base}\nAPI Key: ${TOKEN}`;
+  try{
+    if(navigator.clipboard && window.isSecureContext){ await navigator.clipboard.writeText(text); }
+    else{   // 兜底（页面经 IP 访问等非安全上下文时）
+      const ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove();
+    }
+    feedback(`已复制接入信息：${base} · API Key 已复制（可直接粘贴给 dsh 等客户端）`);
+  }catch(e){ feedback("复制失败，请手动复制："+text,true); }
+};
 $("import").onclick=async()=>{
   const sel=selectedKeys(); if(!sel.length) return feedback("请至少勾选一个模型",true);
   $("import").disabled=true;
