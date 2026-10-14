@@ -44,3 +44,4 @@ __pycache__/
 # ---------- 令牌/凭据交接临时文件（防误提交） ----------
 *.tmp
 /_github_token.txt
+tests/_e2e_gateway.log

@@ -46,7 +46,8 @@ WPS 云端模型（DeepSeek / Qwen / GLM / Kimi / MiMo / MiniMax / 豆包）
 
 - `GET /v1/models`（含每模型 `reasoning_efforts`）
 - `POST /v1/chat/completions`（支持 `stream: true`，SSE 流式，思维链在 `reasoning_content`）
-- 思维等级透传：请求体 `"reasoning_effort": "low|high|max"`（不支持的档位自动忽略）
+- 思维等级透传：请求体 `"reasoning_effort": "low|high|max"`（不支持的档位自动忽略）；
+  导入 WorkBuddy / ZCode 的条目自带档位元数据，在使用侧切换强度
 - 令牌：`Authorization: Bearer lingxi-bridge`（默认值，环境变量可改）
 
 ## 快速开始

@@ -48,26 +48,22 @@ button:hover:not(:disabled){background:var(--green-bg)}button:disabled{opacity:.
 .act-empty{font-size:12px;color:var(--muted)}
 .toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.metrics{display:flex;gap:26px}.metrics div{display:flex;flex-direction:column;gap:3px}
 .metrics b{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}.metrics span{font-size:11px;color:var(--muted)}
+.sel-group{display:flex;gap:2px}.sel-group button{font-size:12px;padding:4px 9px;border:none;background:none;color:var(--green)}
+.sel-group button:hover:not(:disabled){background:var(--green-bg);border-radius:6px}
 .tool-actions{display:flex;align-items:center;gap:9px}
-#testEffort{font:inherit;font-size:12px;padding:7px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--text)}
 .switch{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px;cursor:pointer}
 #models{overflow:auto;flex:1;min-height:80px;display:flex;flex-direction:column;gap:7px;padding:2px}
 .model{display:flex;align-items:center;gap:12px;padding:10px 13px;border:1px solid transparent;background:var(--row);border-radius:9px;width:100%}
 .model.selected{background:var(--green-bg);border-color:var(--green)}
 .model-check{width:17px;height:17px;flex-shrink:0;accent-color:var(--green);cursor:pointer}
 .model-info{min-width:1;width:150px;flex-shrink:0}.model-name{font-size:13.5px;font-weight:550;line-height:1.4}.model-key{font-size:10.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.effort-cell{flex:1;display:flex;align-items:center;gap:6px;min-width:0}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
-.segbtn{border:none;border-radius:0;padding:5px 11px;font-size:12px;background:var(--bg)}
-.segbtn.on{background:var(--green);color:#fff}
-.adaptive{font-size:11.5px;color:var(--muted)}
-.badges{display:flex;align-items:center;gap:8px;flex-shrink:0;min-width:150px;justify-content:flex-end}
+.badges{display:flex;align-items:center;gap:8px;flex:1;justify-content:flex-end}
 .badge{font-size:11px;white-space:nowrap;padding:4px 8px;border-radius:6px;background:var(--green-bg);color:var(--green)}
 .badge.ok{background:var(--green);color:#fff}.badge.bad{color:#fff;background:var(--red)}.badge.time{background:transparent;color:var(--muted);padding:4px 0}
 #feedback{font-size:12.5px;background:var(--green-bg);color:var(--green);padding:10px 13px;border-radius:8px}#feedback.error{color:var(--orange);background:#fbefdf}
 footer{font-size:11px;color:var(--muted);line-height:1.6;flex-shrink:0}
 [hidden]{display:none!important}
-@media(prefers-color-scheme:dark){:root{--bg:#202422;--panel:#272d2a;--row:#2a302d;--text:#e3ebe6;--muted:#a0ada5;--line:#3b4540;--green:#8cc9ad;--green-bg:#2a4035;--orange:#e9ad70}.primary,.segbtn.on{color:#17221c}.badge.bad{background:#7a3530;color:#f3d9d6}#feedback.error{background:#45392c}}
+@media(prefers-color-scheme:dark){:root{--bg:#202422;--panel:#272d2a;--row:#2a302d;--text:#e3ebe6;--muted:#a0ada5;--line:#3b4540;--green:#8cc9ad;--green-bg:#2a4035;--orange:#e9ad70}.primary{color:#17221c}.badge.bad{background:#7a3530;color:#f3d9d6}#feedback.error{background:#45392c}}
 </style></head>
 <body>
 <aside>
@@ -94,7 +90,7 @@ footer{font-size:11px;color:var(--muted);line-height:1.6;flex-shrink:0}
   <div class="sidebar-bottom"><p class="creator">仅用于个人学习，调用本人订阅额度<br>请勿公开、转售或共享令牌</p></div>
 </aside>
 <main>
-  <header><div><h2>灵犀订阅模型</h2><p class="subtitle">勾选模型并选择思维等级；一键测试（连通性）后导入 WorkBuddy / ZCode。</p></div>
+  <header><div><h2>灵犀订阅模型</h2><p class="subtitle">勾选模型；一键测试（连通性）后导入 WorkBuddy / ZCode。思考强度在使用侧（WorkBuddy / ZCode）选择。</p></div>
   <div class="actions"><button id="copyAccess" title="复制 Base URL 与 API Key，用于 dsh 等客户端接入">复制接入信息</button><button id="findcfg">刷新状态</button></div></header>
   <div class="service-status"><span id="service-dot" class="dot off"></span><span id="service-text">正在检测服务…</span>
     <span class="lingxi-state" id="lingxi-state" hidden></span>
@@ -109,13 +105,10 @@ footer{font-size:11px;color:var(--muted);line-height:1.6;flex-shrink:0}
   </div>
   <section class="toolbar">
     <div class="metrics"><div><b id="discovered">0</b><span>已发现</span></div><div><b id="selected">0</b><span>已勾选</span></div><div><b id="imported">0</b><span>已导入</span></div></div>
+    <div class="sel-group">
+      <button id="selAll">全选</button><button id="selInvert">反选</button><button id="selNone">清空</button>
+    </div>
     <div class="tool-actions">
-      <select id="testEffort" title="仅影响「一键测试」：选择后统一覆盖所有模型的测试等级；留空则按各模型行已选等级（均不影响导入的模型配置）">
-        <option value="">测试等级：各模型</option>
-        <option value="low">统一：低</option>
-        <option value="high">统一：高</option>
-        <option value="max">统一：Max</option>
-      </select>
       <button id="testAll">一键测试已勾选</button>
       <label class="switch"><input id="force" type="checkbox" style="accent-color:var(--green)">强制覆盖同名</label>
       <button id="import" class="primary">导入 WorkBuddy</button>
@@ -130,7 +123,6 @@ footer{font-size:11px;color:var(--muted);line-height:1.6;flex-shrink:0}
 const TOKEN = new URLSearchParams(location.search).get("token") || "";
 const H = {Authorization: "Bearer " + TOKEN};
 const $ = id => document.getElementById(id);
-const EFF_LABEL = {low:"低", high:"高", max:"Max"};
 function feedback(msg, isErr){ const f=$("feedback"); f.hidden=false; f.textContent=msg; f.className=isErr?"error":""; if(!isErr) setTimeout(()=>f.hidden=true,4000); }
 async function api(path, opt){ opt=opt||{}; opt.headers=Object.assign({},H,opt.headers); const r=await fetch(path,opt); if(!r.ok){let t;try{t=(await r.json()).detail}catch(t){t=r.status};throw new Error(t);} return r.json(); }
 
@@ -140,32 +132,32 @@ async function loadModels(){
   const box=$("models"); box.innerHTML="";
   d.data.forEach(m=>{
     if(m.id==="auto") return;
-    const efs=m.reasoning_efforts||[];
-    let effortHtml;
-    if(efs.length){
-      effortHtml = `<div class="seg" title="该模型的一键测试等级（不选=云端默认；仅影响测试，不影响导入）">` + efs.map(e=>`<button class="segbtn" data-k="${m.id}" data-e="${e}">${EFF_LABEL[e]}</button>`).join("") + `</div>`;
-    } else {
-      effortHtml = `<span class="adaptive" title="该模型自适应思考，无手动档位">自适应思考</span>`;
-    }
     const lab=document.createElement("div"); lab.className="model selected";
     lab.innerHTML=`<input class="model-check" type="checkbox" data-k="${m.id}" checked>
       <div class="model-info"><div class="model-name">${m.name}</div><div class="model-key">${m.id}</div></div>
-      <div class="effort-cell">${effortHtml}</div>
       <div class="badges"><span class="badge time" id="t-${m.id}"></span><span class="badge" id="b-${m.id}">待测试</span></div>`;
     box.appendChild(lab);
   });
   $("discovered").textContent=d.data.filter(x=>x.id!=="auto").length;
   box.querySelectorAll(".model-check").forEach(c=>c.onchange=()=>{c.closest(".model").classList.toggle("selected",c.checked);recount();});
-  box.querySelectorAll(".segbtn").forEach(b=>b.onclick=()=>{
-    const on=b.classList.contains("on");
-    b.parentElement.querySelectorAll(".segbtn").forEach(x=>x.classList.remove("on"));
-    if(!on) b.classList.add("on");
+  recount();
+}
+function setAllChecked(v){
+  document.querySelectorAll(".model-check").forEach(c=>{
+    c.checked=v; c.closest(".model").classList.toggle("selected",v);
   });
   recount();
 }
 function selectedKeys(){ return [...document.querySelectorAll(".model-check")].filter(c=>c.checked).map(c=>c.dataset.k); }
-function effortOf(k){ const s=document.querySelector(`.segbtn[data-k="${k}"].on`); return s?s.dataset.e:null; }
 function recount(){ $("selected").textContent=selectedKeys().length; }
+$("selAll").onclick=()=>setAllChecked(true);
+$("selNone").onclick=()=>setAllChecked(false);
+$("selInvert").onclick=()=>{
+  document.querySelectorAll(".model-check").forEach(c=>{
+    c.checked=!c.checked; c.closest(".model").classList.toggle("selected",c.checked);
+  });
+  recount();
+};
 
 /* ---------- 账号 / 扫码 ---------- */
 let qrAutoShown=false;   // 登录失效时自动展开扫码框（每页只自动展开一次，成功后复位）
@@ -241,10 +233,9 @@ function probeTitle(it){   // 探测指标悬停详情：首字/字数/速率
 $("testAll").onclick=async()=>{
   const keys=selectedKeys();
   if(!keys.length) return feedback("请先勾选模型",true);
-  const effort_map={}; keys.forEach(k=>{ const e=effortOf(k); if(e) effort_map[k]=e; });
   try{
     await api("/admin/test-all",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({models:keys,effort:$("testEffort").value,effort_map})});
+      body:JSON.stringify({models:keys})});
     keys.forEach(k=>{ const b=$("b-"+k); b.className="badge"; b.textContent="排队中"; $("t-"+k).textContent=""; $("t-"+k).title=""; });
     feedback("开始测试 "+keys.length+" 个模型…");
     if(testPollTimer) clearInterval(testPollTimer);
