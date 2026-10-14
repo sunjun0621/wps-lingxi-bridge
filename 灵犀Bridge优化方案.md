@@ -75,32 +75,39 @@
 
 ### P4 探索项（对应批次 5，单独立项）
 
-> **P4-1 spike 侦察记录（2026-10-14，实测 + 二进制勘探）**：
-> **问题**：为什么 wb-proxy 反代出的模型在 ZCode 里能调工具，灵犀桥的不能？
-> **结论**：两者机制完全不同，且灵犀桥缺的**不是可配的开关，而是一条协议通道**——
-> 1. **wb-proxy 可行**：上游(WorkBuddy 云端)原生支持 OpenAI function calling；代理把客户端 `tools`
->    透传给上游，上游返回标准 `tool_calls`（实测 `finish_reason=tool_calls`，参数完整）→ 链路天然通。
-> 2. **灵犀桥不可行（协议级）**：`render_messages()` 把消息压平成纯文本（`tools` 直接被丢弃）；
->    更深层原因是 app-server 协议**没有"客户端注入工具定义"的字段**——`run/start` 的 agent_input
->    只接受 text/files/refs/permission_mode 等；实测把 `tools` 与 `extended_llm_arguments={"tools":…}`
->    塞进 agent_input，**服务端不报错但静默忽略**（模型仍凭自有知识直答、无任何 tool_call 帧）。
->    工具调用是**协议内部机制**：lingxi 自己的 agent
->    运行时（二进制内 `c_tool_call` 组件：`c_bash_auth`/`c_read_file`/`c_edit_file`/`c_websearch`、
->    `tool_call_style`、skills/connectors 体系）在灵犀侧执行**它自己的工具**，不向客户端暴露
->    OpenAI 式 tool_calls 交换。客户端能做的是"批准"（handshake 的 bash_approval/skill_management
->    都是审批类开关），而非"提供工具"。
->    （二进制勘探还确认：其内置技能 browser/deep-research/docx 与 ifind/wind 等 MCP connectors 均为
->    灵犀自有的服务端工具，与调用方工具无关。）
-> 3. **可行替代路线（已验证）**：**提示词模拟 function calling**——桥把客户端 `tools` 序列化进系统提示，
->    模型按约定 JSON 格式输出 `tool_calls`，桥解析后转成 OpenAI 标准帧。
->    实测 deepseek-v4.1-flash 单轮输出严格 JSON、解析通过。工程项：提示词模板、输出容错解析
->    （防代码块包裹/多余文字）、多轮 tool 结果回灌、流式兼容——工作量中等，语义可靠性需多轮回归。
-> **决策建议**：若要在 ZCode agent 里用灵犀模型"干活"，走路线 3（桥内实现，默认关闭、按模型/开关启用）；
-> 若只是个人轻量使用，继续用 wb-proxy 模型承担 agent 场景，灵犀模型专注纯对话。
+> **P4-1 spike 侦察记录（2026-10-14 初查 / 2026-10-15 修正）**：
+> **问题**：为什么 wb-proxy 反代出的模型在 ZCode 里能调工具，灵犀桥的不能？灵犀桥是不是只能聊天？
+> **修正说明**：10-14 初查时判定"模型无任何工具帧、工具调用完全不发生"——**该判定有误**（帧检测逻辑只记了
+> 通知 method、漏采 `params.type`，把 `c_websearch`/`c_bash` 等工具帧当普通组件漏掉了）。10-15 重测并修正。
+> **修正后的完整结论**：
+> 1. **wb-proxy 模式**：上游(WorkBuddy 云端)原生 OpenAI function calling；代理透传客户端 `tools`，
+>    上游返回标准 `tool_calls`（实测 `finish_reason=tool_calls`），**由调用方（ZCode）执行工具**。
+> 2. **灵犀模式（自带工具链，实际是"能干活的"）**：灵犀模型在 run 内部**自动调用它自己的工具**——
+>    实测触发帧：`c_tool_call`+`c_websearch`（显式"联网搜索"与**隐式**（"最近24小时有什么科技新闻"）
+>    都会触发，返回真实新闻与来源链接）；`c_tool_call`+`c_bash`（bash **在本机真实执行**：
+>    `bridge-runtime/state/workspace` 为工作目录，创建文件/读文件/ls 均实测成功）；文件读取可用。
+>    工具执行发生在**灵犀侧（本机 app-server）**，结果融进最终文本返回——即"它自己干活、交结果"。
+>    二进制勘探佐证：内置技能 browser/deep-research/docx 与 ifind/wind 等 MCP connectors 均为其自有工具。
+>    `bash_approval`/`skill_management` A/B 对照（False/True）行为一致，工具照常触发。
+> 3. **灵犀桥真正缺的能力**：**接受"调用方注入的工具"**（客户端 `tools`）——协议无此字段（实测 `tools`、
+>    `extended_llm_arguments={"tools":…}` 塞入 agent_input 被静默忽略）。因此灵犀模型**无法在 ZCode/WorkBuddy
+>    的 agent 循环里响应宿主的 tool_calls**（不能"替宿主"编辑宿主工作区的文件、调用宿主工具集）；
+>    但**它并不"只会聊天"**——搜索、bash、文件、技能这些它自己会干，干完把结果给你。
+> 4. **安全注意（新发现）**：灵犀 bash 的工作目录是 `bridge-runtime/state/workspace`，但**路径未见硬限制**
+>    （实测 `ls /d/2_MyAI/` 可读工作区外路径）。即"让灵犀模型执行命令"= 在本机执行命令；
+>    个人自用可接受，但要对提示词注入类输入保持警惕（模型可能被诱导执行命令）。
+> 5. **可选增强（若立项）**：
+>    a) 桥内"提示词模拟 function calling"——把宿主 `tools` 序列化进系统提示、模型按 JSON 输出 tool_calls、
+>       桥解析转 OpenAI 标准帧（实测模型单轮可严格输出 JSON）。用于让灵犀"替宿主干活"，工程量中等、
+>       语义可靠性需多轮回归，默认关。
+>    b) 桥内**工具活动透传**——把 `c_tool_call`/`c_websearch`/`c_bash` 帧转成控制台活动面板可见的
+>       "正在搜索/正在执行命令"状态（小工程量，提升可观测性；现有收集器只采集 c_text/c_reasoning）。
+> **决策建议**：定位清晰——**灵犀模型 = 自带搜索/执行/文件工具的全能助手**（把任务描述给它，它自己干）；
+> **wb-proxy 模型 = 可被宿主驱动的工作马**（agent 循环里替 ZCode 干活）。两者在 ZCode 里互补，按场景选用。
 
 | 编号 | 项目 | 依据 | 价值 | 做法 |
 |---|---|---|---|---|
-| P4-1 | 工具调用支持 | ~~appserver 协议已含 permission_mode、bash_approval、skills 字段~~ **已侦察**：协议不支持客户端注入工具；提示词模拟路线实测可行（见上） | WorkBuddy 里把灵犀当"会干活的模型"——超越 OW 免费模型的差异化 | 已出 spike 结论；如立项按"提示词模拟"实现（默认关） |
+| P4-1 | 工具调用支持 | **已侦察（10-15 修正）**：模型自带工具链（搜索/bash/文件/技能）实测可用且自动触发；缺的是"接受宿主注入 tools"通道（协议无字段） | ① 自带工具＝开箱即用的干活能力（无需开发）；② 若要"替宿主干活"走提示词模拟 | 侦察完成；如立项按 5a 提示词模拟（默认关）+ 5b 工具活动透传 |
 | P4-2 | 图片输入 | agent_input 已有 files/file_ids 字段 | 多模态对话 | 探索上传接口；可并入 P4-1 之后 |
 
 ---
