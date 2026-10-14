@@ -52,18 +52,24 @@ WPS 云端模型（DeepSeek / Qwen / GLM / Kimi / MiMo / MiniMax / 豆包）
 
 ## 快速开始
 
-### 0. 准备
+### 0. 新机三步上手（换电脑时）
 
-- Windows；Python 3.11+：`pip install -r requirements.txt`
-- **运行件**（本仓库不含 WPS 官方文件）：项目根目录需有 `appserver/app-server/`，
-  含 `service/lingxi.exe` 与 `lingxi-native-host.exe`。
-  获取方式二选一：
-  1. 从 WPS 灵犀桌面的安装目录复制 `resources/app-server/`（或其中的
-     `app-server-windows-amd64.zip` 解压）到项目根目录；
-  2. 沿用他人已备好的 `appserver/` 目录拷贝（自用范围内）。
-- **无需安装或运行 WPS 灵犀桌面客户端**：桥驱动的是项目内自带的
-  `lingxi.exe` 拷贝，与客户端安装目录、客户端数据目录均无依赖（已实测）；
-  登录、掉线恢复全部走控制台扫码（纯网页接口）。
+```bash
+git clone https://github.com/sunjun0621/wps-lingxi-bridge.git
+cd wps-lingxi-bridge
+python setup.py      # 依赖自检 + 从入库的 zip 解压运行件 + 生成运行目录骨架
+```
+
+然后双击 `启动灵犀Bridge.bat`，控制台扫码登录即可。
+**运行件随仓库分发**（`appserver/app-server-windows-amd64.zip`，私有仓库自用），
+克隆后无需安装 WPS 灵犀桌面客户端；`wps_sid` 登录态不入库，新机上扫码即得。
+
+> 前提：Windows；Python 3.11+（`setup.py` 会自检依赖并给清华源安装命令）。
+
+### 0·补. 从零获取运行件（zip 缺失时）
+
+`appserver/app-server-windows-amd64.zip` 缺失时，从 WPS 灵犀桌面安装目录复制
+`resources/app-server/` 下的 zip（或整个目录）到项目 `appserver/`，再跑 `python setup.py`。
 
 ### 1. 启动
 

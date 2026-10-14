@@ -179,6 +179,7 @@
 | 文件 | 作用 |
 |---|---|
 | `启动灵犀Bridge.bat` | 双击启动网关并打开控制台 |
+| `setup.py` | **新机初始化**：克隆后跑一次（依赖自检 + 解压运行件 + 生成运行目录骨架） |
 | `bridge_gateway.py` | FastAPI 网关：OpenAI 接口 + 控制台 + admin（崩溃自愈 · 单实例 · 仅本机监听） |
 | `appserver_client.py` | lingxi.exe 的 stdio JSON-RPC 客户端（含 effort · 存活检测 · 瞬态错误分类） |
 | `qr_login.py` | WPS 扫码登录、grant_token、账号检查 |
@@ -187,10 +188,10 @@
 | `gateway.example.json` | 可选配置模板（复制为 `bridge-runtime/gateway.json` 生效） |
 | `models.example.json` | 可选模型清单模板（复制为 `bridge-runtime/models.json` 生效，保存即热重载） |
 | `console.html` | 可视化控制台（含活动面板 · 结果持久化恢复） |
-| `check_deps.py` | 依赖全量体检（`python check_deps.py`，列 6 包状态 + 清华源命令） |
+| `check_deps.py` | 依赖全量体检（`python check_deps.py`，列 6 包状态 + 清华源命令；`--status` 速查网关/灵犀/登录） |
 | `plans.json` | 云端套餐与每模型思维等级缓存 |
-| `current_sid.txt` | 扫码更新后的 wps_sid（自动生成） |
-| `bridge-runtime/`、`appserver/` | 运行目录与 app-server 程序（`appserver/` 内另存有原始运行件 zip 备份，客户端卸载后重建运行件就靠它） |
+| `current_sid.txt` | 扫码更新后的 wps_sid（自动生成，**不入库**——换机后扫码即得） |
+| `bridge-runtime/`、`appserver/` | 运行目录与 app-server 程序；运行件原始 zip 随仓库分发（`appserver/app-server-windows-amd64.zip`），`setup.py` 据此自动重建运行件 |
 | `tests/` | 协议仿真桩与批次验收 E2E 脚本（`e2e_batch2` / `e2e_config` / `e2e_deps` / `e2e_reqlog` / `e2e_probe` 均可复跑） |
 
 ---
