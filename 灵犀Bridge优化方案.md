@@ -137,6 +137,47 @@
 
 ---
 
+## 七、远期大型升级目标：去 app-server 化（纯 HTTP 直连）
+
+> 2026-10-14 主人指定立项（写入项目记忆）。性质：**远期大型升级**，非近期批次；
+> 触发时机由主人决定，开工前先做 spike（半天~一天级）出可行性结论。
+
+**动机**：当前唯一的本地二进制依赖是项目自带的 `lingxi.exe`（app-server 协议执行器）。
+它带来两个长期问题：① 若 WPS 升级协议、需要新版运行件，获取渠道只有"装一次客户端提取"（或找已装的人
+拷 zip）；② 交付物不纯：仓库代码 + 81MB 官方二进制 zip。对照项目 `workbuddy2api-hub`（纯 HTTP 反代、
+零本地二进制、网页 OAuth + 直连云端 API）已证明该形态的可行性与更低的长期维护成本。
+
+**目标形态**：`bridge_gateway.py` 把对 lingxi 的调用从"stdio JSON-RPC 驱动 lingxi.exe"
+整体替换为"**HTTPS 直连灵犀云端 API**"（保留现有 OpenAI 兼容层、控制台、扫码登录、活动/日志/探测等全部外围）。
+验收：11 个模型 + low/high/max 思维等级 + 流式（含 reasoning_content）+ 多轮对话全部经纯 HTTP 实现，
+运行期无任何 lingxi.exe 进程，客户端可永久卸载且不依赖其 zip。
+
+**已有的基础资产**（开工时先读）：
+- `gateway/`(main.py + lingxi_client.py)：早期 HTTP 直连方案，已打通 assistant 通道单模型
+  （`lingxi.wps.cn/api/aigc/v3/assistant/*`,鉴权仅 Cookie `wps_sid` + `X-Cc-Version: 1`）——
+  是路线可行性证明，作为起手式。
+- `01~18_*.py` 逆向脚本 + `endpoints_report.txt` / `modelmap.txt` / `efforts_anchors.txt`：
+  endpoint 扫描与模型/档位字段的定位方法论（当年用于摸 app-server 协议，同样适用云 API）。
+- app-server 侧已确认的协议语义（可直接沿用的领域知识）：`run/start` 的 model 映射
+  (`provider=lingxi, model_name=<key>`)、`reasoning_effort` 字段、会话机制、11 模型 key 清单
+  （见 `bridge_gateway.py` MODELS 与 `plans.json`）。
+
+**关键未知点（spike 要回答的问题）**：
+1. 云端 assistant 通道是否支持 11 个模型的显式选择（早期方案只验证了默认通道）？
+2. `reasoning_effort`(low/high/max) 在云 API 的字段名与取值格式（app-server 侧是透传，云端真实参数待验证）？
+3. 流式分帧格式（早期 `_handle_block` 只解了 `type=text`;思维链、错误帧、结束帧的全貌待摸）。
+4. 多轮会话机制：早期方案用"历史指纹 → session_id 复用";模型切换/思维等级是否绑会话？
+5. 稳定性与风控：直连是否比"官方 exe"更容易触发云端风控/限流（需小样本实测）。
+
+**迁移策略（建议）**：网关内加 provider 开关（`LINGXI_BRIDGE_BACKEND=appserver|http`,默认 appserver），
+双路线并存运行一段；http 路线验收全绿后再考虑把 appserver 路线降级为备选。
+app-server 相关代码（`appserver_client.py`、自愈/取消逻辑）保留不删——它仍是当前生产路线。
+
+**风险与边界**：协议可能随时变更（云端 API 无兼容承诺）；早期方案的 assistant 通道覆盖面未知，
+不排除部分能力（如思维链细节）只有 app-server 能拿到；逆向工作涉及对云 API 的探测，注意频率与仅为本人账号自用。
+
+---
+
 ## 附：本轮盘点读取的关键文件
 
 - OW-Bridge：`package.json`、`src/` 全部 20 个模块（main / backend / server / runtime / protocol / handoff / repair / sync / probe / config-finder / system-proxy 等）、`desktop/`（main.cjs / renderer.js / activity.cjs）
